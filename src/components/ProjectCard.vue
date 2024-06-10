@@ -30,8 +30,9 @@ const reduct = (str: string) => str.substring(0, 50) + '...'
                 От {{ project.investmentMin }} руб. до {{ project.investmentMax }} руб.
             </v-card-title>
         </v-card-item>
+
         <v-chip
-            v-for="tag in project.tags"
+            v-for="tag in project.tagsList"
             class="ma-2"
             color="pink"
             label

@@ -4,7 +4,7 @@ import type { InjectionKey } from "vue";
 
 export const modalStoreSymbol = <InjectionKey<string>> Symbol('modalStore')
 
-export const createBoardStore = () => {
+export const createModalStore = () => {
     const isVisible = ref(false)
     const isShown = computed(() => isVisible.value)
 

@@ -11,7 +11,7 @@ const reduct = (str: string) => str.substring( 0, 50 ) + '...'
 
 <template>
     <v-card
-        className="mx-auto my-8"
+        class="mx-auto my-8"
         elevation="16"
         max-width="100%"
     >
@@ -30,8 +30,8 @@ const reduct = (str: string) => str.substring( 0, 50 ) + '...'
         </v-card-text>
 
         <v-chip
-            v-for="tag in investor.tags"
-            className="ma-2"
+            v-for="tag in investor.tagsList"
+            class="ma-2"
             color="pink"
             label
             text-color="white"

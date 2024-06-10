@@ -1,4 +1,11 @@
 export class Project {
+    get createdAt(): number {
+        return this._createdAt;
+    }
+
+    set createdAt(value: number) {
+        this._createdAt = value;
+    }
     set name(value: string) {
         this._name = value;
     }
@@ -7,8 +14,8 @@ export class Project {
         this._description = value;
     }
 
-    set tags(value: string[]) {
-        this._tags = value;
+    set tagsList(value: string[]) {
+        this._tagsList = value;
     }
 
     set investmentMin(value: number) {
@@ -23,18 +30,19 @@ export class Project {
         this._contact = value;
     }
 
-    set members(value: string[]) {
-        this._members = value;
+    set membersList(value: string[]) {
+        this._membersList = value;
     }
     constructor(
         private readonly _id: string,
         private _name: string,
         private _description: string,
-        private _tags: string[],
+        private _tagsList: string[],
         private _investmentMin: number,
         private _investmentMax: number,
-        private _contact: string,
-        private _members: string[],
+        private _createdAt: number,
+        private _membersList: string[],
+        private _contact?: string,
     ) {}
 
     get id(): string {
@@ -49,8 +57,8 @@ export class Project {
         return this._description
     }
 
-    get tags(): string[] {
-        return this._tags
+    get tagsList(): string[] {
+        return this._tagsList
     }
 
     get investmentMin(): number {
@@ -61,11 +69,11 @@ export class Project {
         return this._investmentMax
     }
 
-    get contact(): string {
-        return this._contact
+    get contact(): string | null {
+        return this._contact || null
     }
 
-    get members(): string[] {
-        return this._members
+    get membersList(): string[] {
+        return this._membersList
     }
 }

@@ -2,68 +2,31 @@
 import CardList from '../components/UI/CardList.vue'
 import ProjectCard from '../components/ProjectCard.vue'
 import FilterPanel from '../components/UI/FilterPanel.vue'
-import { defineProps, PropType, reactive, ref } from "vue";
+import { defineProps, onMounted, PropType, reactive, ref, watch } from "vue";
 import { Project } from "@/core/entities/project";
-import { Investor } from "@/core/entities/investor";
 import { useRoute } from "vue-router";
-
-const rawProjectList = ref(
-    [
-        new Project(
-            '1',
-            'Project 1',
-            'Project 1 bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla ',
-            ['Тег 1', 'Тег 2', 'Тег 3'],
-            100000,
-            5000000,
-            'user1',
-            ['user1', 'user2', 'user3'],
-        ),
-        new Project(
-            '1',
-            'Project 1',
-            'Project 1 bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla ',
-            ['Тег 1', 'Тег 2', 'Тег 3'],
-            100000,
-            5000000,
-            'user2',
-            ['user2', 'user2', 'user3'],
-        ),
-        new Project(
-            '1',
-            'Project 1',
-            'Project 1 bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla ',
-            ['Тег 1', 'Тег 2', 'Тег 3'],
-            100000,
-            5000000,
-            'user3',
-            ['user3', 'user3', 'user3'],
-        ),
-    ]
-);
+import { useProjectStore } from "@/stores/project";
+import { useFilterStore } from "@/stores/filter";
 
 const route = useRoute();
-const currentUserId = <String> route.params?.userId
+const { projectList, loadProjectsList, isListEmpty } = useProjectStore()
+const { projectSortOptions, projectFilter, getProjectFilter, tags } = useFilterStore()
 
-const projectList = ref( rawProjectList.value.filter(project =>
-        currentUserId && project.members.includes(currentUserId)
-    )
-)
+const userCriteria = <String> route.params?.userId
+
+onMounted(async () => {
+    loadProjectsList(getProjectFilter(), userCriteria)
+})
 
 const getById = (id: string): Project => {
     return projectList.value.find( (project) => project.id === id )
 }
 
-const tags = ['tag 1', 'tag 2', 'tag 3']
+watch(projectFilter, async () => {
+    isListEmpty.value = false
+    loadProjectsList(getProjectFilter(), userCriteria)
+})
 
-const filter = reactive({
-    searchQuery: '',
-    sortOrder: 'ASC',
-    sortOption: 'По умолчанию',
-    tag: [],
-    requiredInvestmentMin: null as Number,
-    requiredInvestmentMax: null as Number,
-});
 </script>
 
 <template>
@@ -78,7 +41,7 @@ const filter = reactive({
                         <v-select
                             label="Выберите категорию"
                             clearable
-                            v-model="filter.tags"
+                            v-model="projectFilter.tags"
                             :items="tags"
                             chips
                             flat
@@ -86,13 +49,13 @@ const filter = reactive({
                         ></v-select>
 
                         <v-text-field
-                            v-model="filter.requiredInvestmentMin"
+                            v-model="projectFilter.investmentMin"
                             label="Мин. размер инвестиций"
                             clearable
                         ></v-text-field>
 
                         <v-text-field
-                            v-model="filter.requiredInvestmentMax"
+                            v-model="projectFilter.investmentMax"
                             label="Макс. размер инвестиций"
                             clearable
                         ></v-text-field>
@@ -103,16 +66,22 @@ const filter = reactive({
             <v-col>
                 <div>
                     <v-select
-                        v-model="filter.sortOption"
-                        :items="['Сначала новые', 'Сначала старые', 'По умолчанию']"
+                        v-model="projectFilter.sortOption"
+                        title="sdf"
+                        :items="projectSortOptions"
                     ></v-select>
                     <v-text-field
-                        v-model="filter.searchQuery"
+                        v-model="projectFilter.nameSearchString"
                         placeholder="Поиск по ключевому слову"
                         required
                     ></v-text-field>
                 </div>
+
+                <div v-if="isListEmpty">
+                    <h1>По данным критериям ничего не найдено</h1>
+                </div>
                 <CardList
+                    v-else
                     :list="projectList"
                     v-slot="{ id }"
                 >
@@ -122,8 +91,6 @@ const filter = reactive({
                 </CardList>
             </v-col>
         </v-row>
-
-
 
     </v-container>
 </template>

@@ -1,4 +1,30 @@
 export class Investor {
+    set type(value: string) {
+        this._type = value;
+    }
+    get tagsList(): string[] {
+        return this._tagsList;
+    }
+
+    set tagsList(value: string[]) {
+        this._tagsList = value;
+    }
+
+    get createdAt(): number {
+        return this._createdAt;
+    }
+
+    set createdAt(value: number) {
+        this._createdAt = value;
+    }
+
+    get membersList(): string[] {
+        return this._membersList;
+    }
+
+    set membersList(value: string[]) {
+        this._membersList = value;
+    }
     get type(): string {
         return this._type;
     }
@@ -9,23 +35,13 @@ export class Investor {
     set description(value: string) {
         this._description = value;
     }
-
-    set tags(value: string[]) {
-        this._tags = value;
-    }
-
-    set members(value: string[]) {
-        this._members = value;
-    }
-    get members(): string[] {
-        return this._members;
-    }
     constructor(
         private readonly _id: string,
         private _name: string,
         private _description: string,
-        private _tags: string[],
-        private _members: string[],
+        private _tagsList: string[],
+        private _createdAt: number,
+        private _membersList: string[],
         private _type: string,
     ) {}
 
@@ -41,7 +57,4 @@ export class Investor {
         return this._description
     }
 
-    get tags(): string[] {
-        return this._tags
-    }
 }
