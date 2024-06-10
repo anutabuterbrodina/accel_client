@@ -63,7 +63,7 @@ const router = createRouter({
             component: InvestorView
         },
         {
-            path: '/admin/requests',
+            path: '/:role/requests',
             name: 'requests',
             component: RequestsView
         },

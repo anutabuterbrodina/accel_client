@@ -13,21 +13,21 @@ const rawRequestsList = ref(
             'req1',
             'Заявка на создание проекта',
             'Одобрена',
-            'user1',
-            'project1',
+            'f56ca7b5-a75d-4450-9435-054b2cea76fd',
+            '88016cb3-3c1b-4caf-a2b3-3164649e3319',
         ),
         new Request(
             'req2',
             'Заявка на изменение данных проекта',
             'На модерации',
-            'user1',
-            'project1',
+            'f56ca7b5-a75d-4450-9435-054b2cea76fd',
+            '88016cb3-3c1b-4caf-a2b3-3164649e3319',
         ),
         new Request(
             'req3',
             'Заявка на создание инвестора',
             'Отклонена',
-            'user2',
+            '3de0d578-425e-43ab-96b3-5faa07d9d2a4',
             undefined,
             'Некорректные реквизиты',
             'Для юридического лица необходимо указать ???ОГРН???',
@@ -36,25 +36,29 @@ const rawRequestsList = ref(
             'req4',
             'Заявка на создание инвестора',
             'Одобрена',
-            'user2',
-            'investor1',
+            '3de0d578-425e-43ab-96b3-5faa07d9d2a4',
+            '6900d022-2198-4a86-bb5c-59b4db08d81f',
 
         ),
         new Request(
             'req5',
             'Заявка на изменение данных инвестора',
             'Одобрена',
-            'user2',
-            'investor1',
+            '3de0d578-425e-43ab-96b3-5faa07d9d2a4',
+            '6900d022-2198-4a86-bb5c-59b4db08d81f',
         )
     ]
 );
 const route = useRoute();
 const currentUserId = <String> route.params?.userId
+const role = <String> route.params?.role
 
-const requestsList = ref( rawRequestsList.value.filter(request =>
-    currentUserId && request.creatorId === currentUserId
-))
+const requestsList = ref( rawRequestsList.value.filter(request => {
+    if (role === 'admin')
+        return true
+
+    return currentUserId && request.creatorId === currentUserId
+}))
 
 const getById = (id: string): Request => {
     return requestsList.value.find( (request) => request.id === id )
