@@ -1,78 +1,30 @@
 <script setup lang="ts">
 import CardList from '../components/UI/CardList.vue'
-import ProjectCard from '../components/ProjectCard.vue'
 import FilterPanel from '../components/UI/FilterPanel.vue'
-import { defineProps, PropType, reactive, ref } from "vue";
 import { Request } from "@/core/entities/request";
 import RequestCard from "@/components/RequestCard.vue";
-import { useRoute } from "vue-router";
+import { useRequestStore } from "@/stores/request";
+import { useAuthStore } from "@/stores/auth";
+import { onMounted, watch } from "vue";
+import { useFilterStore } from "@/stores/filter";
 
-const rawRequestsList = ref(
-    [
-        new Request(
-            'req1',
-            'Заявка на создание проекта',
-            'Одобрена',
-            'f56ca7b5-a75d-4450-9435-054b2cea76fd',
-            '88016cb3-3c1b-4caf-a2b3-3164649e3319',
-        ),
-        new Request(
-            'req2',
-            'Заявка на изменение данных проекта',
-            'На модерации',
-            'f56ca7b5-a75d-4450-9435-054b2cea76fd',
-            '88016cb3-3c1b-4caf-a2b3-3164649e3319',
-        ),
-        new Request(
-            'req3',
-            'Заявка на создание инвестора',
-            'Отклонена',
-            '3de0d578-425e-43ab-96b3-5faa07d9d2a4',
-            undefined,
-            'Некорректные реквизиты',
-            'Для юридического лица необходимо указать ???ОГРН???',
-        ),
-        new Request(
-            'req4',
-            'Заявка на создание инвестора',
-            'Одобрена',
-            '3de0d578-425e-43ab-96b3-5faa07d9d2a4',
-            '6900d022-2198-4a86-bb5c-59b4db08d81f',
+const { requestsList, loadRequestsList, isListEmpty, statuses, types } = useRequestStore()
+const { requestSortOptions, requestFilter, getRequestFilter } = useFilterStore()
+const { userId } = useAuthStore()
 
-        ),
-        new Request(
-            'req5',
-            'Заявка на изменение данных инвестора',
-            'Одобрена',
-            '3de0d578-425e-43ab-96b3-5faa07d9d2a4',
-            '6900d022-2198-4a86-bb5c-59b4db08d81f',
-        )
-    ]
-);
-const route = useRoute();
-const currentUserId = <String> route.params?.userId
-const role = <String> route.params?.role
-
-const requestsList = ref( rawRequestsList.value.filter(request => {
-    if (role === 'admin')
-        return true
-
-    return currentUserId && request.creatorId === currentUserId
-}))
+onMounted(async () => {
+    loadRequestsList(getRequestFilter(), userId.value)
+})
 
 const getById = (id: string): Request => {
     return requestsList.value.find( (request) => request.id === id )
 }
 
-const statuses = ['Отклонена', 'На модерации', 'Одобрена']
-const types = ['Заявка на изменение данных проекта', 'Заявка на изменение данных проекта', 'Заявка на создание инвестора', 'Заявка на изменение данных инвестора']
+watch(requestFilter, async () => {
+    isListEmpty.value = false
+    loadRequestsList(getRequestFilter(), userId.value)
+})
 
-const filter = reactive({
-    types: null,
-    sortOrder: 'ASC',
-    sortOption: 'По умолчанию',
-    statuses: null,
-});
 </script>
 
 <template>
@@ -84,19 +36,19 @@ const filter = reactive({
             <FilterPanel>
                 <v-form>
                     <v-container class="mt-0 pt-0">
-                        <v-select
-                            label="Тип заявки"
-                            clearable
-                            v-model="filter.types"
-                            :items="types"
-                            chips
-                            flat
-                            multiple
-                        ></v-select>
+<!--                        <v-select-->
+<!--                            label="Тип заявки"-->
+<!--                            clearable-->
+<!--                            v-model="requestFilter.types"-->
+<!--                            :items="types"-->
+<!--                            chips-->
+<!--                            flat-->
+<!--                            multiple-->
+<!--                        ></v-select>-->
                         <v-select
                             label="Статус заявки"
                             clearable
-                            v-model="filter.statuses"
+                            v-model="requestFilter.statuses"
                             :items="statuses"
                             chips
                             flat
@@ -109,11 +61,16 @@ const filter = reactive({
             <v-col>
                 <div>
                     <v-select
-                        v-model="filter.sortOption"
-                        :items="['Сначала новые', 'Сначала старые', 'По умолчанию']"
+                        v-model="requestFilter.sortOption"
+                        :items="requestSortOptions"
                     ></v-select>
                 </div>
+
+                <div v-if="isListEmpty">
+                    <h1>По данным критериям ничего не найдено</h1>
+                </div>
                 <CardList
+                    v-else
                     :list="requestsList"
                     v-slot="{ id }"
                 >
@@ -123,8 +80,6 @@ const filter = reactive({
                 </CardList>
             </v-col>
         </v-row>
-
-
 
     </v-container>
 </template>

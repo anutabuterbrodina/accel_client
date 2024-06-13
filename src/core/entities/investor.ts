@@ -2,12 +2,12 @@ export class Investor {
     set type(value: string) {
         this._type = value;
     }
-    get tagsList(): string[] {
-        return this._tagsList;
+    get interestList(): string[] {
+        return this._interestList;
     }
 
-    set tagsList(value: string[]) {
-        this._tagsList = value;
+    set interestList(value: string[]) {
+        this._interestList = value;
     }
 
     get createdAt(): number {
@@ -39,7 +39,7 @@ export class Investor {
         private readonly _id: string,
         private _name: string,
         private _description: string,
-        private _tagsList: string[],
+        private _interestList: string[],
         private _createdAt: number,
         private _membersList: string[],
         private _type: string,
@@ -56,5 +56,4 @@ export class Investor {
     get description(): string {
         return this._description
     }
-
 }

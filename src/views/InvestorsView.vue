@@ -7,16 +7,17 @@ import InvestorCard from "@/components/InvestorCard.vue";
 import { useRoute } from "vue-router";
 import { useFilterStore } from "@/stores/filter";
 import { useInvestorStore } from "@/stores/investor";
+import { useAuthStore } from "@/stores/auth";
 
-
-const route = useRoute();
 const { investorsList, loadInvestorsList, isListEmpty } = useInvestorStore()
 const { investorSortOptions, investorFilter, getInvestorFilter, investorTypes, tags } = useFilterStore()
+const { userId } = useAuthStore()
+const route = useRoute();
 
-const userCriteria = <String> route.params?.userId
+const showMemberedInvestors = route.name === 'userInvestors'
 
 onMounted(async () => {
-    loadInvestorsList(getInvestorFilter(), userCriteria)
+    loadInvestorsList(getInvestorFilter(), showMemberedInvestors ? userId : null)
 })
 
 const getById = (id: string): Investor => {
@@ -25,13 +26,16 @@ const getById = (id: string): Investor => {
 
 watch(investorFilter, async () => {
     isListEmpty.value = false
-    loadInvestorsList(getInvestorFilter(), userCriteria)
+    loadInvestorsList(getInvestorFilter(), showMemberedInvestors ? userId : null)
 })
 </script>
 
 <template>
     <v-container>
-        <div class="text-center">
+        <div class="text-center" v-if="showMemberedInvestors">
+            <h1>Мои инвесторы</h1>
+        </div>
+        <div class="text-center" v-else>
             <h1>Список инвесторов</h1>
         </div>
         <v-row class="mt-5">
@@ -82,9 +86,9 @@ watch(investorFilter, async () => {
                     :list="investorsList"
                     v-slot="{ id }"
                 >
-                    <InvestorCard
-                        :investor="getById(id)"
-                    />
+                    <router-link :to="{ name: 'investor', params: { investorId: id } }">
+                        <InvestorCard :investor="getById(id)"/>
+                    </router-link>
                 </CardList>
             </v-col>
         </v-row>

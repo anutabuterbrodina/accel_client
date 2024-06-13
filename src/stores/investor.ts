@@ -10,7 +10,7 @@ export const createInvestorStore = () => {
     const investorApi = new InvestorApi();
 
     const investorsList = ref<Investor[]>([])
-    const investor = ref<Investor>()
+    let investor = reactive<Investor|null>(null)
 
     const isListEmpty = ref(false)
 
@@ -22,8 +22,8 @@ export const createInvestorStore = () => {
         }
     }
 
-    const loadInvestor = async (filter) => {
-        investor.value = await investorApi.getSingle({})
+    const loadInvestor = async () => {
+        investor = reactive(await investorApi.getSingle({}))
     }
 
     return { investorsList, loadInvestorsList, investor, loadInvestor, isListEmpty }

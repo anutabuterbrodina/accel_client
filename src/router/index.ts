@@ -1,4 +1,5 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, } from 'vue-router'
+import type { RouterOptions } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LogInView from '../views/LogInView.vue'
 import SignUpView from '../views/SignUpView.vue'
@@ -9,7 +10,7 @@ import ProjectView from '../views/ProjectView.vue'
 import InvestorView from '../views/InvestorView.vue'
 import RequestsView from '../views/RequestsView.vue'
 
-const router = createRouter({
+const router = createRouter(<RouterOptions> {
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         {
@@ -72,7 +73,31 @@ const router = createRouter({
             name: 'userRequests',
             component: RequestsView
         },
+        // {
+        //     path: '/:pathMatch(.*)',
+        //     redirect: '/'
+        // }
     ]
+})
+
+router.beforeEach((to, from, next) => {
+    const publicViews = [
+        'home',
+        'login',
+        'signup',
+        'projects',
+        'project',
+        'investors',
+        'investor',
+    ];
+    const authRequired = !publicViews.includes(to.name.toString());
+    const loggedIn = localStorage.getItem('authToken');
+
+    if (authRequired && !loggedIn) {
+        return next('/login');
+    }
+
+    next();
 })
 
 export default router

@@ -7,8 +7,8 @@ export class ApiManager {
     // private _baseUrl = import.meta.env.VITE_API_HOST
     protected _baseUrl = '/api'
 
-    protected formURL(resource?: string): string {
-        let url = this._baseUrl + '/' + this.RESOURCE_GROUP
+    protected formURL(resourceGroup?: string, resource?: string): string {
+        let url = this._baseUrl + '/' + resourceGroup || this.RESOURCE_GROUP
 
         return resource ? url + '/' + resource : url
     }
@@ -36,12 +36,13 @@ export class ApiManager {
         }
     }
 
-    protected async post(url: string, config: AxiosRequestConfig): Promise<any> {
+    protected async post(url: string, d, config: AxiosRequestConfig = {}): Promise<any> {
         if ( !config?.headers?.[ "Accept" ] )
             config.headers = { Accept: "application/json" }
 
         try {
-            const { data } = await axios.post(url, config)
+            const { data } = await axios.post(url, d, config)
+            console.log(data)
             return data
         } catch (e) {
             console.log(e)

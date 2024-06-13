@@ -2,11 +2,9 @@ import { ApiManager } from "@/api/api-manager";
 import { Investor } from "@/core/entities/investor";
 
 export class InvestorApi extends ApiManager {
-    public RESOURCE_GROUP: string = 'investors'
-
     public async getSingle(params): Promise<Investor> {
 
-        const result = await this.get( this.formURL(), {
+        const result = await this.get( this.formURL('investor'), {
             params: { ...params }
         })
 
@@ -15,16 +13,15 @@ export class InvestorApi extends ApiManager {
     }
 
     public async getList(params): Promise<Investor[]> {
-        const result = <[any]> await this.get( this.formURL(), {
+        const result = <[any]> await this.get( this.formURL('investors'), {
             params: { ...this.clearParams(params) }
         })
-        console.log(params)
 
         return result.map(item => new Investor(
             item.id,
             item.name,
             item.description,
-            item.tagsList,
+            item.interestList,
             item.createdAt,
             item.membersList,
             item.type,

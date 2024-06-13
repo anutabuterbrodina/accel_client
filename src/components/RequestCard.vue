@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { defineProps, PropType, ref } from "vue/dist/vue";
 import { Request } from "@/core/entities/request";
+import { useFilterStore } from "@/stores/filter";
 
 defineProps({
     request: Object as PropType<Request>,
     isModerator: Boolean,
 })
+
+const { requestTypes, requestStatuses } = useFilterStore()
 
 </script>
 
@@ -19,19 +22,19 @@ defineProps({
             <v-row>
                 <v-col>
                     <v-card-title>
-                        {{ request.type }}
+                        {{ requestTypes[request.type] }}
                     </v-card-title>
                 </v-col>
 
                 <v-col style="display: flex; flex-direction: column; align-items: flex-end">
-                    <v-chip color="green" variant="flat" v-if="request.status === 'Одобрена'">
-                        {{ request.status }}
+                    <v-chip color="green" variant="flat" v-if="requestStatuses[request.status] === 'Одобрена'">
+                        Одобрена
                     </v-chip>
-                    <v-chip color="blue" variant="flat" v-if="request.status === 'На модерации'">
-                        {{ request.status }}
+                    <v-chip color="blue" variant="flat" v-if="requestStatuses[request.status] === 'На модерации'">
+                        На модерации
                     </v-chip>
-                    <v-chip color="red" variant="flat" v-if="request.status === 'Отклонена'">
-                        {{ request.status }}
+                    <v-chip color="red" variant="flat" v-if="requestStatuses[request.status] === 'Отклонена'">
+                        Отклонена
                     </v-chip>
 
                 </v-col>

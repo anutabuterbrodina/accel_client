@@ -7,6 +7,7 @@ export const filterStoreSymbol = <InjectionKey<string>> Symbol('filterStore')
 export const createFilterStore = () => {
     const baseSortOption = 'По умолчанию'
     const sortOptions = [baseSortOption, 'Сначала новые', 'Сначала старые']
+    const investments = [ 100000, 500000, 1000000, 5000000, 10000000 ]
     const tags = [
         'Домашние животные',
         'Здоровье и медицина',
@@ -20,7 +21,6 @@ export const createFilterStore = () => {
     ]
 
     const filter = reactive({
-        nameSearchString: null,
         sortOrder: <String> null,
         sortOption: baseSortOption
     })
@@ -29,6 +29,7 @@ export const createFilterStore = () => {
         tags: null,
         investmentMin: null,
         investmentMax: null,
+        nameSearchString: null,
         ...toRefs(filter)
     })
 
@@ -68,6 +69,7 @@ export const createFilterStore = () => {
     const investorFilter = reactive({
         tags: null,
         types: null,
+        nameSearchString: null,
         ...toRefs(filter)
     })
 
@@ -93,6 +95,56 @@ export const createFilterStore = () => {
     const investorSortOptions = [ ...sortOptions ]
     const investorTypes = ['legal_entity', 'sole_trader', 'individual']
 
+
+    const requestFilter = reactive({
+        statuses: null,
+        types: null,
+        ...toRefs(filter)
+    })
+
+    const getRequestFilter = () => {
+        const newFilter = { ...requestFilter }
+        switch (newFilter.sortOption) {
+            case baseSortOption:
+                newFilter.sortOption = <String> null
+                break
+            case 'Сначала новые':
+                newFilter.sortOption = 'createdAt'
+                newFilter.sortOrder = 'DESC'
+                break
+            case 'Сначала старые':
+                newFilter.sortOption = 'createdAt'
+                newFilter.sortOrder = 'ASC'
+                break
+        }
+        newFilter.types = requestFilter.types?.map( (type) => {
+            const el = Object.entries(requestTypes).find((elArr) => elArr[1] === type)
+            return el[0]
+        }) || null
+        newFilter.statuses = requestFilter.statuses?.map( (status) => {
+            const el = Object.entries(requestStatuses).find((elArr) => elArr[1] === status)
+            return el[0]
+        }) || null
+
+        console.log(requestFilter.types)
+        console.log(newFilter.types)
+
+        return newFilter
+    }
+
+    const requestSortOptions = [ ...sortOptions ]
+    const requestTypes = {
+        ['register_project']: 'Заявка на создание проекта',
+        ['register_investor']: 'Заявка на создание инвестора',
+        ['change_project_business_data']: 'Заявка на изменение данных проекта',
+        ['change_investor_requisites']: 'Заявка на изменение данных инвестора',
+    }
+    const requestStatuses = {
+        ['rejected']: 'Отклонена',
+        ['on_moderation']: 'На модерации',
+        ['accepted']: 'Одобрена',
+    }
+
     return {
         projectFilter,
         getProjectFilter,
@@ -101,7 +153,13 @@ export const createFilterStore = () => {
         getInvestorFilter,
         investorSortOptions,
         investorTypes,
+        requestFilter,
+        getRequestFilter,
+        requestSortOptions,
         tags,
+        investments,
+        requestTypes,
+        requestStatuses,
     }
 }
 

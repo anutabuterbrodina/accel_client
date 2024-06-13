@@ -1,26 +1,16 @@
 <script setup lang="ts">
 import { defineProps, reactive, ref } from "vue";
-import { Project } from "@/core/entities/project";
+import { useProjectStore } from "@/stores/project";
+import { useFilterStore } from "@/stores/filter";
 
 defineProps({
     action: String
 })
 
+const { project } = useProjectStore()
+const { tags, investments } = useFilterStore()
+
 const valid = ref(false)
-
-const project = reactive(new Project(
-    '1',
-    'Project 1',
-    'Project 1 bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla ',
-    ['Тег 1', 'Тег 2', 'Тег 3'],
-    100000,
-    5000000,
-    'user1',
-    ['user1', 'user2', 'user3'],
-));
-
-const tags = ['Тег 1', 'Тег 2', 'Тег 3', 'Тег 4', 'Тег 5', 'Тег 6', 'Тег 7', 'Тег 8', 'Тег 9']
-const investments = [100000, 500000, 1000000, 5000000, 10000000]
 
 const nameRules = [
     v => !!v || 'Project name is required',
@@ -29,19 +19,15 @@ const nameRules = [
 const descRules = [
     v => v.length <= 400 || 'Project description must be less than 400 characters',
 ]
-const rangeMinRules = [
-    v => project.investmentMin && project.investmentMax && v <= project.investmentMax || 'Min cant be more than max'
+const rangeRules = [
+    v => project.investmentMin && v > project.investmentMin || 'Min cant be more than max'
 ]
-const rangeMaxRules = [
-    v => project.investmentMin && project.investmentMax && v >= project.investmentMin || 'Max cant be less than min'
-]
-
 
 const bp = ref()
 </script>
 
 <template>
-    <v-form v-model="valid" class="w-100">
+    <v-form v-model="valid" class="w-100" @submit.prevent="$emit('handleForm')" >
         <v-container>
             <div style="width: 700px;">
                 <div v-show="action === 'editCommonData' || action === 'create'">
@@ -71,6 +57,7 @@ const bp = ref()
                         clearable
                         v-model="project.tags"
                         :items="tags"
+                        label="Категории"
                         chips
                         flat
                         multiple
@@ -80,13 +67,12 @@ const bp = ref()
                         <v-select
                             v-model="project.investmentMin"
                             :items="investments"
-                            :rules="rangeMinRules"
                             label="Мин. размер инвестиций"
                         ></v-select>
                         <v-select
                             v-model="project.investmentMax"
                             :items="investments"
-                            :rules="rangeMaxRules"
+                            :rules="rangeRules"
                             label="Макс. размер инвестиций"
                         ></v-select>
                     </div>

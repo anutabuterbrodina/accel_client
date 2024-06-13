@@ -6,7 +6,7 @@ export class ProjectApi extends ApiManager {
 
     public async getSingle(params): Promise<Project> {
 
-        const result = await this.get( this.formURL(), {
+        const result = await this.get( this.formURL('project'), {
             params: { ...params }
         })
 
@@ -24,7 +24,7 @@ export class ProjectApi extends ApiManager {
     }
 
     public async getList(params): Promise<Project[]> {
-        const result = <[any]> await this.get( this.formURL(), {
+        const result = <[any]> await this.get( this.formURL('projects'), {
             params: { ...this.clearParams(params) }
         })
 

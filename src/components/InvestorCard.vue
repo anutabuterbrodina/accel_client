@@ -30,14 +30,14 @@ const reduct = (str: string) => str.substring( 0, 50 ) + '...'
         </v-card-text>
 
         <v-chip
-            v-for="tag in investor.tagsList"
+            v-for="interest in investor.interestList"
             class="ma-2"
             color="pink"
             label
             text-color="white"
         >
             <v-icon start icon="mdi-label"></v-icon>
-            {{ tag }}
+            {{ interest }}
         </v-chip>
 
     </v-card>

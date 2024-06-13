@@ -1,12 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useModalStore } from "@/stores/modal";
+import { useAuthStore } from "@/stores/auth";
 
-const email = ref()
-const password = ref()
-const phone = ref()
-const name = ref()
-const surname = ref()
+const { payload } = useAuthStore()
 
 const valid = ref(false)
 
@@ -19,25 +15,20 @@ const emailRules = [
     (v: string) => /.+@.+\..+/.test(v) || 'Введите корректный Email'
 ]
 const phoneRules = [
-    (v: string) => v.match('^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7,10}$')  || 'Введите корректный телефон'
+    (v: string) => /^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$/.test(v)  || 'Введите корректный телефон'
 ]
-
-const { setVisibility } = useModalStore()
-
-const submit = (ev) => {
-    setVisibility(false)
-    console.log('Logged in')
-}
+const passwordRules = [
+    (v: string) => v === payload.password || 'Пароли должны совпадать'
+]
 </script>
 
 <template>
-    <v-form v-model="valid" @submit.prevent="submit" class="w-50 mt-5" >
+    <v-form v-model="valid" @submit.prevent="$emit('signup')" class="w-50 mt-5" >
         <v-container>
-
             <v-row align="center">
                 <v-col>
                     <v-text-field
-                        v-model="name"
+                        v-model="payload.name"
                         :counter="10"
                         :rules="nameRules"
                         label="Имя"
@@ -48,7 +39,7 @@ const submit = (ev) => {
 
                 <v-col>
                     <v-text-field
-                        v-model="surname"
+                        v-model="payload.surname"
                         :counter="10"
                         :rules="nameRules"
                         label="Фамилия"
@@ -62,7 +53,7 @@ const submit = (ev) => {
             <v-row>
                 <v-col>
                     <v-text-field
-                        v-model="phone"
+                        v-model="payload.phone"
                         :rules="phoneRules"
                         label="Телефон"
                         hide-details
@@ -72,7 +63,7 @@ const submit = (ev) => {
 
                 <v-col>
                     <v-text-field
-                        v-model="email"
+                        v-model="payload.email"
                         :rules="emailRules"
                         label="E-mail"
                         hide-details
@@ -84,8 +75,19 @@ const submit = (ev) => {
             <v-row>
                 <v-col>
                     <v-text-field
-                        v-model="password"
-                        label="Password"
+                        v-model="payload.password"
+                        label="Пароль"
+                        hide-details
+                        type="password"
+                        required
+                    ></v-text-field>
+                </v-col>
+
+                <v-col>
+                    <v-text-field
+                        v-model="payload.passwordCheck"
+                        :rules="passwordRules"
+                        label="Подтвердите пароль"
                         hide-details
                         type="password"
                         required

@@ -2,20 +2,27 @@
 import CardList from '../components/UI/CardList.vue'
 import ProjectCard from '../components/ProjectCard.vue'
 import FilterPanel from '../components/UI/FilterPanel.vue'
+import ProjectForm from '../components/forms/ProjectForm.vue'
+import Modal from '../components/UI/Modal.vue'
 import { defineProps, onMounted, PropType, reactive, ref, watch } from "vue";
 import { Project } from "@/core/entities/project";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useProjectStore } from "@/stores/project";
 import { useFilterStore } from "@/stores/filter";
+import { useAuthStore } from "@/stores/auth";
+import { useModalStore } from "@/stores/modal";
+import { useRequestStore } from "@/stores/request";
 
-const route = useRoute();
 const { projectList, loadProjectsList, isListEmpty } = useProjectStore()
 const { projectSortOptions, projectFilter, getProjectFilter, tags } = useFilterStore()
+const { userId, showMembered} = useAuthStore()
+const route = useRoute();
+const router = useRouter();
 
-const userCriteria = <String> route.params?.userId
+const showMemberedProjects = ref(route.name === 'userProjects' && userId.value)
 
 onMounted(async () => {
-    loadProjectsList(getProjectFilter(), userCriteria)
+    loadProjectsList(getProjectFilter(), showMemberedProjects.value ? userId.value : null)
 })
 
 const getById = (id: string): Project => {
@@ -24,18 +31,40 @@ const getById = (id: string): Project => {
 
 watch(projectFilter, async () => {
     isListEmpty.value = false
-    loadProjectsList(getProjectFilter(), userCriteria)
+    loadProjectsList(getProjectFilter(), showMemberedProjects.value ? userId.value : null)
 })
 
+const { setVisibility } = useModalStore()
+
+const { createProjectRequest } = useRequestStore()
+const { project } = useProjectStore()
+
+const handleSubmit = async () => {
+    createProjectRequest(
+        userId.value,
+        project.name,
+        project.description,
+        project.investmentMin,
+        project.investmentMax,
+        project.tags,
+    ).then(() => router.push({ name: 'userRequests', params: { userId: userId.value } }))
+}
 </script>
 
 <template>
     <v-container>
-        <div class="text-center">
+        <div class="text-center" v-if="showMemberedProjects">
+            <h1>Мои проекты</h1>
+        </div>
+        <div class="text-center" v-else>
             <h1>Список проектов</h1>
         </div>
         <v-row class="mt-5">
+
             <FilterPanel>
+                <div v-if="showMemberedProjects" class="px-4 mb-5">
+                    <v-btn @click="setVisibility(true)" class="w-100" color="primary">Создать</v-btn>
+                </div>
                 <v-form>
                     <v-container class="mt-0 pt-0">
                         <v-select
@@ -67,7 +96,6 @@ watch(projectFilter, async () => {
                 <div>
                     <v-select
                         v-model="projectFilter.sortOption"
-                        title="sdf"
                         :items="projectSortOptions"
                     ></v-select>
                     <v-text-field
@@ -85,12 +113,21 @@ watch(projectFilter, async () => {
                     :list="projectList"
                     v-slot="{ id }"
                 >
-                    <ProjectCard
-                        :project="getById(id)"
-                    />
+
+                    <router-link :to="{ name: 'project', params: { projectId: id } }">
+                        <ProjectCard :project="getById(id)"/>
+                    </router-link>
+
                 </CardList>
             </v-col>
         </v-row>
+
+        <Modal>
+            <ProjectForm
+                :action="'create'"
+                @handleForm="handleSubmit"
+            />
+        </Modal>
 
     </v-container>
 </template>

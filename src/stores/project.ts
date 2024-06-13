@@ -10,7 +10,13 @@ export const createProjectStore = () => {
     const projectApi = new ProjectApi();
 
     const projectList = ref<Project[]>([])
-    const project = ref<Project>()
+    const project = reactive({
+        name: null,
+        description: null,
+        investmentMin: null,
+        investmentMax: null,
+        tags: [],
+    })
 
     const isListEmpty = ref(false)
 
@@ -23,7 +29,7 @@ export const createProjectStore = () => {
     }
 
     const loadProject = async (filter) => {
-        project.value = await projectApi.getSingle({})
+        project = await projectApi.getSingle({})
     }
 
     return { projectList, loadProjectsList, project, loadProject, isListEmpty }
