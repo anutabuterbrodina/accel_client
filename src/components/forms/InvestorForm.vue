@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps, reactive, ref } from "vue";
-import { Investor } from "@/core/entities/investor";
+import { Investor } from "@/core/entities/investor/investor";
 
 defineProps({
     action: String

@@ -2,7 +2,7 @@
 import ProjectDetails from "@/components/ProjectDetails.vue";
 import { defineProps, reactive, ref } from "vue";
 import Modal from "@/components/UI/Modal.vue";
-import { User } from "@/core/entities/user";
+import { User } from "@/core/entities/user/user";
 import ProjectForm from "@/components/forms/ProjectForm.vue";
 import { useRoute } from "vue-router";
 import { useProjectStore } from "@/stores/project";

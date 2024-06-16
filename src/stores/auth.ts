@@ -1,60 +1,33 @@
 import { inject } from "@vue/runtime-core";
-import type { InjectionKey } from "vue";
-import { reactive, ref } from "vue";
-import { UserApi } from "@/api/user.api";
+import type { Ref, InjectionKey, UnwrapNestedRefs } from "vue";
+import { computed, reactive, ref } from "vue";
+import { AuthAPI } from "@/api/auth/auth.api";
+import type { IPayload } from "@/core/helpers/payload.interface";
+
+interface IAuthStore {
+    currentUser: UnwrapNestedRefs<IPayload>,
+    isLoggedIn: Ref<boolean>,
+    refreshStore: Function,
+}
 
 export const authStoreSymbol = <InjectionKey<string>> Symbol('authStore')
 
 export const createAuthStore = () => {
-    const api = new UserApi();
+    const authToken = ref(AuthAPI.getAuthToken())
+    const isLoggedIn = computed(() => !!authToken.value)
+    const currentUser = reactive(AuthAPI.getPayload())
 
-    const authToken = ref( api.getAuthToken() )
-    const isLoggedIn = ref( !!authToken.value );
-    const userId = ref( api.getUserId() )
+    const refreshStore = () => {
+        const payload = AuthAPI.getPayload()
 
-    const login = async () => {
-        await api.login( {
-            email: payload.email,
-            password: payload.password
-        })
-        authToken.value = api.getAuthToken()
-        isLoggedIn.value = true
+        currentUser.id = payload.id
+        currentUser.email = payload.email
+        currentUser.role = payload.role
+
+        authToken.value = AuthAPI.getAuthToken()
     }
 
-    const logout = () => {
-        api._clearAuthToken()
-        isLoggedIn.value = false
-        payload.name = ''
-        payload.surname = ''
-        payload.email = ''
-        payload.phone = ''
-        payload.password = ''
-        payload.passwordCheck = ''
-    }
-
-    const payload = reactive({
-        name: '',
-        surname: '',
-        email: '',
-        phone: '',
-        password: '',
-        passwordCheck: '',
-    })
-
-    const signup = async () => {
-        await api.signup({
-            name: payload.name,
-            surname: payload.surname,
-            email: payload.email,
-            phone: payload.phone,
-            password: payload.password,
-        })
-
-        authToken.value = api.getAuthToken()
-        isLoggedIn.value = true
-    }
-
-    return { payload, signup, isLoggedIn, logout, login, userId }
+    return { currentUser, isLoggedIn, refreshStore }
 }
 
-export const useAuthStore = () => inject(authStoreSymbol)
+export const useAuthStore = () => <IAuthStore> inject(authStoreSymbol)

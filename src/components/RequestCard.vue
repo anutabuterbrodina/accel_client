@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { defineProps, PropType, ref } from "vue/dist/vue";
-import { Request } from "@/core/entities/request";
-import { useFilterStore } from "@/stores/filter";
+import { defineProps } from "vue";
+import type { PropType } from "vue";
+import { Request } from "@/core/entities/request/request";
+import { Constants } from "@/core/static/constants";
+import { ERequestTypes } from "@/core/entities/request/request-types.enum";
+import { ERequestStatuses } from "@/core/entities/request/request-statuses.enum";
 
 defineProps({
     request: Object as PropType<Request>,
     isModerator: Boolean,
 })
-
-const { requestTypes, requestStatuses } = useFilterStore()
-
 </script>
 
 <template>
@@ -22,19 +22,29 @@ const { requestTypes, requestStatuses } = useFilterStore()
             <v-row>
                 <v-col>
                     <v-card-title>
-                        {{ requestTypes[request.type] }}
+                        {{ Constants.getRequestTypeNameByValue(request.type) }}
                     </v-card-title>
+                    <v-card-subtitle>
+                        <span>
+                            {{ request.createdAt }}
+                        </span>
+                    </v-card-subtitle>
+                    <v-card-subtitle>
+                        <span>
+                            {{ request.contactEmail }}
+                        </span>
+                    </v-card-subtitle>
                 </v-col>
 
                 <v-col style="display: flex; flex-direction: column; align-items: flex-end">
-                    <v-chip color="green" variant="flat" v-if="requestStatuses[request.status] === 'Одобрена'">
-                        Одобрена
+                    <v-chip color="green" variant="flat" v-if="request.status === ERequestStatuses.ACCEPTED">
+                        {{ Constants.getRequestStatusNameByValue( request.status ) }}
                     </v-chip>
-                    <v-chip color="blue" variant="flat" v-if="requestStatuses[request.status] === 'На модерации'">
-                        На модерации
+                    <v-chip color="blue" variant="flat" v-if="request.status === ERequestStatuses.ON_MODERATION">
+                        {{ Constants.getRequestStatusNameByValue( request.status ) }}
                     </v-chip>
-                    <v-chip color="red" variant="flat" v-if="requestStatuses[request.status] === 'Отклонена'">
-                        Отклонена
+                    <v-chip color="red" variant="flat" v-if="request.status === ERequestStatuses.REJECTED">
+                        {{ Constants.getRequestStatusNameByValue( request.status ) }}
                     </v-chip>
 
                 </v-col>
@@ -42,16 +52,16 @@ const { requestTypes, requestStatuses } = useFilterStore()
             <v-row>
                 <v-col>
                     <v-card-subtitle>
-                        <span v-if="request.targetId && (request.type === 'Заявка на изменение данных проекта'  || request.type === 'Заявка на создание проекта')">
-                            <strong>По проекту:</strong> {{ request.targetId }}
+                        <span v-if="(request.type === ERequestTypes.CHANGE_PROJECT_BUSINESS_DATA)">
+                            <strong>По проекту:</strong> {{ request.projectId }}
                         </span>
-                        <span v-if="request.targetId && (request.type === 'Заявка на изменение данных инвестора' || request.type === 'Заявка на создание инвестора')">
-                            <strong>По инвестору:</strong> {{ request.targetId }}
+                        <span v-if="(request.type === ERequestTypes.CHANGE_INVESTOR_REQUISITES)">
+                            <strong>По инвестору:</strong> {{ request.investorId }}
                         </span>
                     </v-card-subtitle>
 
                     <v-card-subtitle v-if="request.rejectReason">
-                        <v-expansion-panels>
+                        <v-expansion-panels @click.prevent>
                             <v-expansion-panel>
                                 <v-expansion-panel-title>
                                     Причина: {{ request.rejectReason }}
@@ -71,10 +81,6 @@ const { requestTypes, requestStatuses } = useFilterStore()
                 </v-col>
             </v-row>
         </v-card-item>
-
-        <v-btn color="primary" v-if="isModerator">
-            Редактировать
-        </v-btn>
     </v-card>
 </template>
 

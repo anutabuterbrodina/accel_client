@@ -1,21 +1,25 @@
 <script setup lang="ts">
 import SignInForm from "@/components/forms/SignUpForm.vue";
 import { useAuthStore } from "@/stores/auth";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
+import { AuthService } from "@/core/services/auth.service";
+import { useUserStore } from "@/stores/user";
 
-const { signup, isLoggedIn } = useAuthStore()
+const { isLoggedIn, refreshStore } = useAuthStore()
+const { user } = useUserStore()
 const router = useRouter()
 
-if (isLoggedIn.value === true) {
+if (isLoggedIn.value) {
     router.push({ name: 'home' })
 }
 
-const handleSubmitForm = async () => {
-    try {
-        await signup()
-        router.push({ name: 'home' })
-    } catch (e) {
-        alert('Пользователь с таким телефоном или email уже существует')
+const handleSubmitForm = async (password: string) => {
+    await AuthService.signup(user, password)
+
+    refreshStore()
+
+    if (isLoggedIn.value) {
+        await router.push({ name: 'home' })
     }
 }
 </script>

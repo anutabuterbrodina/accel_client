@@ -2,7 +2,7 @@
 import CardList from '../components/UI/CardList.vue'
 import FilterPanel from '../components/UI/FilterPanel.vue'
 import { defineProps, onMounted, PropType, reactive, ref, watch } from "vue";
-import { Investor } from "@/core/entities/investor";
+import { Investor } from "@/core/entities/investor/investor";
 import InvestorCard from "@/components/InvestorCard.vue";
 import { useRoute } from "vue-router";
 import { useFilterStore } from "@/stores/filter";

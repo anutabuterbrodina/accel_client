@@ -32,7 +32,7 @@ const reduct = (str: string) => str.substring(0, 50) + '...'
         </v-card-item>
 
         <v-chip
-            v-for="tag in project.tagsList"
+            v-for="tag in project.tags"
             class="ma-2"
             color="pink"
             label

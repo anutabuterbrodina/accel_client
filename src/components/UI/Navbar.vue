@@ -1,11 +1,17 @@
 <script setup lang="ts">
-
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
+import { AuthService } from "@/core/services/auth.service";
+import { EUserRoles } from "@/core/entities/user/user-roles.enum";
 
-const { isLoggedIn, logout, userId } = useAuthStore()
+const { isLoggedIn, currentUser, refreshStore } = useAuthStore()
 const router = useRouter()
 
+const logout = () => {
+    AuthService.logout()
+    refreshStore()
+    router.push({ name: 'home' })
+}
 </script>
 
 <template>
@@ -17,17 +23,27 @@ const router = useRouter()
                         <v-app-bar-title>ACCEL</v-app-bar-title>
                     </router-link>
 
-                    <div v-if="isLoggedIn" class="ml-15" style="display: flex; justify-content: flex-start">
-                        <router-link :to="{ name: 'userProjects', params: { userId } }" class="ml-10" style="color: inherit">
+                    <div v-if="currentUser.role === EUserRoles.COMMON_USER" class="ml-15" style="display: flex; justify-content: flex-start">
+                        <router-link :to="{ name: 'userProjects', params: { userId: currentUser.id } }" class="ml-10" style="color: inherit">
                             <h3>Мои проекты</h3>
                         </router-link>
-                        <router-link :to="{ name: 'userInvestors', params: { userId } }" class="ml-10" style="color: inherit">
+                        <router-link :to="{ name: 'userInvestors', params: { userId: currentUser.id } }" class="ml-10" style="color: inherit">
                             <h3>Мои инвесторы</h3>
                         </router-link>
-                        <router-link :to="{ name: 'userRequests', params: { userId } }" class="ml-10" style="color: inherit">
+                        <router-link :to="{ name: 'userRequests', params: { userId: currentUser.id } }" class="ml-10" style="color: inherit">
                             <h3>Мои заявки</h3>
                         </router-link>
+                        <router-link :to="{ name: 'bookmarks', params: { userId: currentUser.id } }" class="ml-10" style="color: inherit">
+                            <h3>Мои закладки</h3>
+                        </router-link>
                     </div>
+
+                    <div v-if="currentUser.role === EUserRoles.MODERATOR" class="ml-15" style="display: flex; justify-content: flex-start">
+                        <router-link :to="{ name: 'requests' }" class="ml-10" style="color: inherit">
+                            <h3>Все заявки</h3>
+                        </router-link>
+                    </div>
+
                     <v-spacer></v-spacer>
 
                     <div v-if="isLoggedIn">

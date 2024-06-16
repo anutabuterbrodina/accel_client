@@ -4,11 +4,15 @@ import HomeView from '../views/HomeView.vue'
 import LogInView from '../views/LogInView.vue'
 import SignUpView from '../views/SignUpView.vue'
 import ProfileView from '../views/ProfileView.vue'
-import ProjectsView from '../views/ProjectsView.vue'
+import ProjectsListView from '../views/ProjectsListView.vue'
+import UserProjectsListView from '../views/UserProjectsListView.vue'
 import InvestorsView from '../views/InvestorsView.vue'
 import ProjectView from '../views/ProjectView.vue'
 import InvestorView from '../views/InvestorView.vue'
-import RequestsView from '../views/RequestsView.vue'
+import RequestView from '../views/RequestView.vue'
+import UserRequestsListView from '../views/UserRequestsListView.vue'
+import ModeratorRequestsListView from '../views/ModeratorRequestsListView.vue'
+import BookmarksView from '../views/BookmarksView.vue'
 
 const router = createRouter(<RouterOptions> {
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -36,17 +40,17 @@ const router = createRouter(<RouterOptions> {
         {
             path: '/projects',
             name: 'projects',
-            component: ProjectsView
+            component: ProjectsListView
         },
         {
             path: '/u/:userId/projects',
             name: 'userProjects',
-            component: ProjectsView
+            component: UserProjectsListView
         },
         {
             path: '/project/:projectId',
             name: 'project',
-            component: ProjectView
+            component: ProjectView,
         },
         {
             path: '/investors',
@@ -64,14 +68,24 @@ const router = createRouter(<RouterOptions> {
             component: InvestorView
         },
         {
-            path: '/:role/requests',
+            path: '/admin/requests',
             name: 'requests',
-            component: RequestsView
+            component: ModeratorRequestsListView
         },
         {
             path: '/u/:userId/requests',
             name: 'userRequests',
-            component: RequestsView
+            component: UserRequestsListView
+        },
+        {
+            path: '/u/:userId/request/:requestId',
+            name: 'request',
+            component: RequestView
+        },
+        {
+            path: '/u/:userId/bookmarks',
+            name: 'bookmarks',
+            component: BookmarksView
         },
         // {
         //     path: '/:pathMatch(.*)',

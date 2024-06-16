@@ -2,7 +2,7 @@
 import RightInfoPanel from "@/components/UI/RightInfoPanel.vue";
 import { defineProps, PropType, } from "vue";
 import { Project } from "@/core/entities/project";
-import { User } from "@/core/entities/user";
+import { User } from "@/core/entities/user/user";
 import { useModalStore } from "@/stores/modal";
 
 defineProps({

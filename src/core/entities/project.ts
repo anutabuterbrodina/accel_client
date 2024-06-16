@@ -1,79 +1,76 @@
+import { EProjectStatuses } from "@/core/entities/project/project-statuses.enum";
+
 export class Project {
-    get createdAt(): number {
-        return this._createdAt;
-    }
-
-    set createdAt(value: number) {
-        this._createdAt = value;
-    }
-    set name(value: string) {
-        this._name = value;
-    }
-
-    set description(value: string) {
-        this._description = value;
-    }
-
-    set tagsList(value: string[]) {
-        this._tagsList = value;
-    }
-
-    set investmentMin(value: number) {
-        this._investmentMin = value;
-    }
-
-    set investmentMax(value: number) {
-        this._investmentMax = value;
-    }
-
-    set contact(value: string) {
-        this._contact = value;
-    }
-
-    set membersList(value: string[]) {
-        this._membersList = value;
-    }
     constructor(
-        private readonly _id: string,
-        private _name: string,
-        private _description: string,
-        private _tagsList: string[],
-        private _investmentMin: number,
-        private _investmentMax: number,
-        private _createdAt: number,
-        private _membersList: string[],
-        private _contact?: string,
+        private          _name:          string,
+        private          _description:   string,
+        private          _investmentMin: number,
+        private          _investmentMax: number,
+        private          _tags:          string[],
+        private readonly _id:            string | null             = null,
+        private readonly _createdAt:     number | null             = null,
+        private readonly _members:       string[] | null           = null,
+        private readonly _status:        EProjectStatuses | null   = null,
+        private readonly _contactId:     string | null             = null,
     ) {}
-
-    get id(): string {
-        return this._id
-    }
 
     get name(): string {
         return this._name
+    }
+
+    set name(value: string) {
+        this._name = value
     }
 
     get description(): string {
         return this._description
     }
 
-    get tagsList(): string[] {
-        return this._tagsList
+    set description(value: string) {
+        this._description = value
     }
 
     get investmentMin(): number {
         return this._investmentMin
     }
 
+    set investmentMin(value: number) {
+        this._investmentMin = value
+    }
+
     get investmentMax(): number {
         return this._investmentMax
     }
 
-    get contact(): string | null {
-        return this._contact || null
+    set investmentMax(value: number) {
+        this._investmentMax = value
     }
 
-    get membersList(): string[] {
-        return this._membersList
+    get tags(): string[] {
+        return this._tags
+    }
+
+    set tags(value: string[]) {
+        this._tags = value
+    }
+
+    get id(): string | null {
+        return this._id
+    }
+
+    get createdAt(): number | null {
+        return this._createdAt
+    }
+
+    get members(): string[] | null {
+        return this._members
+    }
+
+    get status(): EProjectStatuses | null {
+        return this._status
+    }
+
+    get contactId(): string | null {
+        return this._contactId
     }
 }

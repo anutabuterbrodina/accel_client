@@ -2,21 +2,23 @@
 import LogInForm from "@/components/forms/LogInForm.vue";
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
+import { AuthService } from "@/core/services/auth.service";
 
-const { isLoggedIn, login } = useAuthStore()
+const { isLoggedIn, refreshStore } = useAuthStore()
 const router = useRouter()
 
-if (isLoggedIn.value === true) {
+if (isLoggedIn.value) {
     router.push({ name: 'home' })
 }
 
-const handleSubmitForm = async () => {
-    login().then(() => {
-        router.push({ name: 'home' })
-    }).catch(e => {
-        console.log(e)
-        alert('Неверно введен пароль или логин')
-    })
+const handleSubmitForm = async (email: string, password: string) => {
+    await AuthService.login(email, password)
+
+    refreshStore()
+
+    if (isLoggedIn.value) {
+        await router.push({ name: 'home' })
+    }
 }
 </script>
 

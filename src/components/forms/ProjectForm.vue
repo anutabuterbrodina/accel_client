@@ -1,47 +1,47 @@
 <script setup lang="ts">
-import { defineProps, reactive, ref } from "vue";
+import { defineEmits, defineProps, ref } from "vue";
 import { useProjectStore } from "@/stores/project";
-import { useFilterStore } from "@/stores/filter";
-
-defineProps({
-    action: String
-})
+import { limitRule, requiredRule, notEmptyRule } from "@/components/forms/validators";
+import { Constants } from "@/core/static/constants";
 
 const { project } = useProjectStore()
-const { tags, investments } = useFilterStore()
+const emit = defineEmits(['formAction'])
 
-const valid = ref(false)
+defineProps({
+    action: String,
+})
 
-const nameRules = [
-    v => !!v || 'Project name is required',
-    v => v.length <= 40 || 'Name must be less than 40 characters',
-]
-const descRules = [
-    v => v.length <= 400 || 'Project description must be less than 400 characters',
-]
-const rangeRules = [
-    v => project.investmentMin && v > project.investmentMin || 'Min cant be more than max'
-]
-
+const isValid = ref(false)
+const rangeMaxRule =  (v: string) => v > project.investmentMin || 'Макс. значение должно быть больше мин.'
+const comment = ref('')
 const bp = ref()
+
+const submitForm = () => {
+    if (!isValid.value) {
+        alert('Введите корректные данные')
+        return
+    }
+    emit('formAction')
+}
 </script>
 
 <template>
-    <v-form v-model="valid" class="w-100" @submit.prevent="$emit('handleForm')" >
+    <v-form v-model="isValid" class="w-100" @submit.prevent="submitForm" >
         <v-container>
             <div style="width: 700px;">
                 <div v-show="action === 'editCommonData' || action === 'create'">
                     <v-text-field
                         v-model="project.name"
                         :counter="40"
-                        :rules="nameRules"
+                        :rules="[requiredRule, (v) => limitRule(v, 40)]"
                         label="Название проекта"
                         required
                     ></v-text-field>
+
                     <v-textarea
                         v-model="project.description"
                         :counter="400"
-                        :rules="descRules"
+                        :rules="[requiredRule, (v) => limitRule(v, 400)]"
                         label="Описание проекта"
                         no-resize
                         rows="10"
@@ -56,7 +56,8 @@ const bp = ref()
                     <v-select
                         clearable
                         v-model="project.tags"
-                        :items="tags"
+                        :items="Constants.getTagsNames()"
+                        :rules="[notEmptyRule]"
                         label="Категории"
                         chips
                         flat
@@ -66,22 +67,35 @@ const bp = ref()
                     <div style="display: flex">
                         <v-select
                             v-model="project.investmentMin"
-                            :items="investments"
+                            :items="Constants.getInvestmentsValues()"
+                            :rules="[notEmptyRule]"
                             label="Мин. размер инвестиций"
                         ></v-select>
                         <v-select
                             v-model="project.investmentMax"
-                            :items="investments"
-                            :rules="rangeRules"
+                            :items="Constants.getInvestmentsValues()"
+                            :rules="[ rangeMaxRule, notEmptyRule]"
                             label="Макс. размер инвестиций"
                         ></v-select>
                     </div>
 
                     <v-file-input
                         label="Бизнес-план"
-                        v-model="bp"
                         accept="pdf"
+                        v-model="bp"
                     ></v-file-input>
+                </div>
+                <div v-if="action === 'create'">
+                    <v-textarea
+                        v-model="comment"
+                        label="Комментарий"
+                        no-resize
+                        rows="2"
+                        row-height="15"
+                        required
+                        clearable
+                        clear-icon="mdi-close-circle"
+                    ></v-textarea>
                 </div>
             </div>
         </v-container>

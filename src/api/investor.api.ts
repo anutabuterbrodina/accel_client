@@ -1,5 +1,5 @@
 import { ApiManager } from "@/api/api-manager";
-import { Investor } from "@/core/entities/investor";
+import { Investor } from "@/core/entities/investor/investor";
 
 export class InvestorApi extends ApiManager {
     public async getSingle(params): Promise<Investor> {

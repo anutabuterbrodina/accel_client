@@ -1,7 +1,7 @@
 import { inject } from "@vue/runtime-core";
 import { computed, reactive, ref } from "vue";
 import type { InjectionKey } from "vue";
-import { Investor } from "@/core/entities/investor";
+import { Investor } from "@/core/entities/investor/investor";
 import { InvestorApi } from "@/api/investor.api";
 
 export const investorStoreSymbol = <InjectionKey<string>> Symbol('investorStore')

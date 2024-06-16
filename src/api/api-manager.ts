@@ -1,51 +1,60 @@
 import axios from "axios";
-import type AxiosRequestConfig from "axios";
+import type { AxiosRequestConfig, AxiosHeaders, AxiosError } from "axios";
 
 export class ApiManager {
-    protected abstract RESOURCE_GROUP: string
 
-    // private _baseUrl = import.meta.env.VITE_API_HOST
-    protected _baseUrl = '/api'
+    protected static readonly _baseUrl = '/api'
 
-    protected formURL(resourceGroup?: string, resource?: string): string {
-        let url = this._baseUrl + '/' + resourceGroup || this.RESOURCE_GROUP
-
-        return resource ? url + '/' + resource : url
+    protected static formURL(resource: string, resourceGroup?: string): string {
+        return resourceGroup
+            ? this._baseUrl + '/' + resourceGroup + '/' + resource
+            : this._baseUrl + '/' + resource
     }
 
-    protected clearParams(params: Object): Object {
+    protected static clearParams(params: Object): Object {
         const removeEmpty = obj => Object.entries(obj).filter(([, v]) => v != null && v !== '').reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {});
         return removeEmpty(params)
     }
 
-    protected async get(url: string, config: AxiosRequestConfig): Promise<any> {
-        if (!config.headers)
-            config.headers = {}
+    private static setHeaders(config: AxiosRequestConfig) {
+        config.headers = {}
 
-        if ( !config?.headers?.[ "Access-Control-Allow-Origin" ] )
+        if ( !config.headers["Access-Control-Allow-Origin"] )
             config.headers["Access-Control-Allow-Origin"] = "*"
 
-        if ( !config?.headers?.[ "Accept" ] )
+        if ( !config.headers["Accept"] )
             config.headers["Accept"] = "application/json"
 
+    }
+
+    private static async sendRequest(config: AxiosRequestConfig) {
+        console.log(config)
+        // return
         try {
-            const { data } = await axios.get(url, config)
-            return data
-        } catch (e) {
+            const axiosResponse = await axios.request(config)
+
+            console.log(axiosResponse)
+            return axiosResponse.data
+
+        } catch (e: AxiosError) {
             console.log(e)
+            console.log(e.message)
         }
     }
 
-    protected async post(url: string, d, config: AxiosRequestConfig = {}): Promise<any> {
-        if ( !config?.headers?.[ "Accept" ] )
-            config.headers = { Accept: "application/json" }
+    protected static async get(url: string, params: { [P: string]: any }): Promise<any> {
+        const config: AxiosRequestConfig = { method: 'GET', url, params }
 
-        try {
-            const { data } = await axios.post(url, d, config)
-            console.log(data)
-            return data
-        } catch (e) {
-            console.log(e)
-        }
+        this.setHeaders(config)
+
+        return await this.sendRequest(config)
+    }
+
+    protected static async post(url: string, data: { [P: string]: any }): Promise<any> {
+        const config: AxiosRequestConfig = { method: 'POST', url, data }
+
+        this.setHeaders(config)
+
+        return await this.sendRequest(config)
     }
 }

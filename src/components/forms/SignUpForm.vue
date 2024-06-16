@@ -1,49 +1,45 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { useAuthStore } from "@/stores/auth";
+import { defineEmits, ref } from "vue";
+import { requiredRule, limitRule, phoneRule, emailRule } from "@/components/forms/validators";
+import { useUserStore } from "@/stores/user";
 
-const { payload } = useAuthStore()
+const { user } = useUserStore()
+const emit = defineEmits(['signup'])
 
-const valid = ref(false)
+const isValid = ref(false)
+const passwordCheckRules = (v: string) => v === password.value || 'Пароли должны совпадать'
+const password = ref('')
+const passwordCheck = ref('')
 
-const nameRules = [
-    v => !!v || 'Name is required',
-    v => v.length <= 40 || 'Name must be less than 40 characters',
-]
-const emailRules = [
-    // (v: string) => v.match('^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7,10}$')
-    (v: string) => /.+@.+\..+/.test(v) || 'Введите корректный Email'
-]
-const phoneRules = [
-    (v: string) => /^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$/.test(v)  || 'Введите корректный телефон'
-]
-const passwordRules = [
-    (v: string) => v === payload.password || 'Пароли должны совпадать'
-]
+const submitForm = () => {
+    if (!isValid.value) {
+        alert('Введите корректные данные')
+        return
+    }
+    emit('signup', password.value)
+}
 </script>
 
 <template>
-    <v-form v-model="valid" @submit.prevent="$emit('signup')" class="w-50 mt-5" >
+    <v-form v-model="isValid" @submit.prevent="submitForm" class="w-50 mt-5" >
         <v-container>
             <v-row align="center">
                 <v-col>
                     <v-text-field
-                        v-model="payload.name"
+                        v-model="user.name"
                         :counter="10"
-                        :rules="nameRules"
+                        :rules="[requiredRule, (v) => limitRule(v, 10)]"
                         label="Имя"
-                        hide-details
                         required
                     ></v-text-field>
                 </v-col>
 
                 <v-col>
                     <v-text-field
-                        v-model="payload.surname"
-                        :counter="10"
-                        :rules="nameRules"
+                        v-model="user.surname"
+                        :counter="15"
+                        :rules="[requiredRule, (v) => limitRule(v, 15)]"
                         label="Фамилия"
-                        hide-details
                         required
                     ></v-text-field>
                 </v-col>
@@ -53,20 +49,18 @@ const passwordRules = [
             <v-row>
                 <v-col>
                     <v-text-field
-                        v-model="payload.phone"
-                        :rules="phoneRules"
+                        v-model="user.phone"
+                        :rules="[requiredRule, phoneRule]"
                         label="Телефон"
-                        hide-details
                         required
                     ></v-text-field>
                 </v-col>
 
                 <v-col>
                     <v-text-field
-                        v-model="payload.email"
-                        :rules="emailRules"
+                        v-model="user.email"
+                        :rules="[requiredRule, emailRule]"
                         label="E-mail"
-                        hide-details
                         required
                     ></v-text-field>
                 </v-col>
@@ -75,9 +69,9 @@ const passwordRules = [
             <v-row>
                 <v-col>
                     <v-text-field
-                        v-model="payload.password"
+                        v-model="password"
+                        :rules="[requiredRule]"
                         label="Пароль"
-                        hide-details
                         type="password"
                         required
                     ></v-text-field>
@@ -85,10 +79,9 @@ const passwordRules = [
 
                 <v-col>
                     <v-text-field
-                        v-model="payload.passwordCheck"
-                        :rules="passwordRules"
+                        v-model="passwordCheck"
+                        :rules="[ passwordCheckRules, requiredRule]"
                         label="Подтвердите пароль"
-                        hide-details
                         type="password"
                         required
                     ></v-text-field>

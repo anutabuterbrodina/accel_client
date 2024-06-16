@@ -1,66 +1,43 @@
 import { inject } from "@vue/runtime-core";
-import { computed, reactive, ref } from "vue";
-import type { InjectionKey } from "vue";
-import { Request } from "@/core/entities/request";
-import { RequestApi } from "@/api/request.api";
+import type { InjectionKey, UnwrapNestedRefs } from "vue";
+import { reactive } from "vue";
+import { Request } from "@/core/entities/request/request";
+import { ERequestTypes } from "@/core/entities/request/request-types.enum";
+import { RequestApi } from "@/api/request/request.api";
+
+interface IRequestStore {
+    request: UnwrapNestedRefs<Request>,
+    refreshStore: (requestId: string) => Promise<void>
+}
 
 export const requestStoreSymbol = <InjectionKey<string>> Symbol('requestStore')
 
 export const createRequestStore = () => {
-    const api = new RequestApi();
+    const request = reactive<Request>({})
 
-    const statuses = ['Отклонена', 'На модерации', 'Одобрена']
-    const types = ['Заявка на изменение данных проекта', 'Заявка на создание проекта', 'Заявка на создание инвестора', 'Заявка на изменение данных инвестора']
-
-    const requestsList = ref<Request[]>([])
-    const request = reactive({
-        content: '',
-        comment: '',
-    })
-
-    const isListEmpty = ref(false)
-
-    const loadRequestsList = async (filter, userId: string) => {
-        try {
-            requestsList.value = await api.getList( { ...filter, userId })
-        } catch (e) {
-            isListEmpty.value = true
-        }
-    }
-
-    const loadRequest = async () => {
-        // request.value = await api.getSingle({})
-    }
-
-    const createProjectRequest = async (
-        userId: string,
-        name: string,
-        description: string,
-        investmentMin: number,
-        investmentMax: number,
-        tags: string[]
-    ) => {
-        return api.createProjectRequest(
-            userId,
-            request.comment,
-            name,
-            description,
-            investmentMin,
-            investmentMax,
-            tags
+    const refreshStore = async (requestId: string) => {
+        RequestApi.getSingle(requestId).then(
+            (result) => {
+                request.type = result.type
+                request.creatorId = result.creatorId
+                request.contactEmail = result.contactEmail
+                request.comment = result.creatorComment
+                request.content = result.requestContent
+                request.rejectReason = result.rejectReason || null
+                request.rejectMessage = result.rejectMessage || null
+                request.id = result.id
+                request.status = result.status
+                request.projectId = result.projectId || null
+                request.investorId = result.investorId || null
+                request.createdAt = result.createdAt
+            }
         )
     }
 
-
     return {
-        isListEmpty,
         request,
-        createProjectRequest,
-        loadRequestsList,
-        requestsList,
-        statuses,
-        types,
+        refreshStore,
     }
 }
 
-export const useRequestStore = () => inject(requestStoreSymbol)
+export const useRequestStore = () => <IRequestStore> inject(requestStoreSymbol)

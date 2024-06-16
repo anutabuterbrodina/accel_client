@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { useRequestStore } from "@/stores/request";
+import RequestDetails from "@/components/RequestDetails.vue";
 import { useAuthStore } from "@/stores/auth";
-import { onMounted, watch } from "vue";
-import { useFilterStore } from "@/stores/filter";
+import { useRouter } from "vue-router";
+import { EUserRoles } from "@/core/entities/user/user-roles.enum";
 
-const { request,  } = useRequestStore()
-const { userId } = useAuthStore()
+const { currentUser } = useAuthStore()
+const router = useRouter()
 
-onMounted(async () => {
-    // loadRequestsList(getRequestFilter(), userId.value)
-})
-
-
+if ( ![EUserRoles.MODERATOR, EUserRoles.COMMON_USER].includes(currentUser.role) ) {
+    router.push('/')
+}
 </script>
 
 <template>
     <v-container>
-        <RequestDetails/>
+        <RequestDetails
+            :is-moderator="currentUser.role === EUserRoles.MODERATOR"
+        />
     </v-container>
 </template>
 

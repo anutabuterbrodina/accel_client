@@ -1,34 +1,38 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { useAuthStore } from "@/stores/auth";
+import { defineEmits, reactive, ref } from "vue";
+import { emailRule, requiredRule } from "@/components/forms/validators";
 
-const { payload } = useAuthStore()
+const emit = defineEmits(['login'])
 
-const valid = ref(false)
+const isValid = ref(false)
+const credentials = reactive({ email: '', password: '' })
 
-const emailRules = [
-    // (v: string) => v.match('^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7,10}$')
-    (v: string) => /.+@.+\..+/.test(v) || 'Введите корректный Email'
-]
+const submitForm = () => {
+    if (!isValid.value) {
+        alert('Введите корректные данные')
+        return
+    }
+
+    emit('login', credentials.email, credentials.password)
+}
 
 </script>
 
 <template>
-    <v-form v-model="valid" @submit.prevent="$emit('login')" class="w-50 mt-5" >
+    <v-form v-model="isValid" @submit.prevent="submitForm" class="w-50 mt-5" >
         <v-container>
 
             <v-text-field
-                v-model="payload.email"
-                :rules="emailRules"
+                v-model="credentials.email"
+                :rules="[emailRule]"
                 label="E-mail"
-                hide-details
                 required
             ></v-text-field>
 
             <v-text-field
-                v-model="payload.password"
+                v-model="credentials.password"
+                :rules="[requiredRule]"
                 label="Password"
-                hide-details
                 type="password"
                 required
             ></v-text-field>

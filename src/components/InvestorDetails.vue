@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import RightInfoPanel from "@/components/UI/RightInfoPanel.vue";
 import { defineProps, PropType, } from "vue";
-import { User } from "@/core/entities/user";
+import { User } from "@/core/entities/user/user";
 import { useModalStore } from "@/stores/modal";
-import { Investor } from "@/core/entities/investor";
+import { Investor } from "@/core/entities/investor/investor";
 
 defineProps({
     investor: Object as PropType<Investor>,

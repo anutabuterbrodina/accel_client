@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import UserForm from "@/components/forms/UserForm.vue";
 import Modal from "@/components/UI/Modal.vue";
-import { User } from "@/core/entities/user";
+import { User } from "@/core/entities/user/user";
 import { reactive } from "vue";
 import { useModalStore } from "@/stores/modal";
 

@@ -1,33 +1,24 @@
 import { inject } from "@vue/runtime-core";
-import { computed, reactive, ref } from "vue";
-import type { UnwrapRef } from "vue";
-import type { InjectionKey } from "vue";
+import { reactive } from "vue";
+import type { InjectionKey, UnwrapNestedRefs } from "vue";
 import { UserApi } from "@/api/user.api";
-import { User } from "@/core/entities/user";
+import { User } from "@/core/entities/user/user";
+
+interface IUserStore {
+    user: UnwrapNestedRefs<User>
+}
 
 export const userStoreSymbol = <InjectionKey<string>> Symbol('userStore')
 
 export const createUserStore = () => {
-    const api = new UserApi();
+    const user = reactive<User>(new User(
+        '',
+        '',
+        '',
+        '',
+    ))
 
-    const usersList = ref<User[]>([])
-    let user = reactive<User|null>(null)
-
-    const isListEmpty = ref(false)
-
-    const loadUsersList = async (userIds: string[]) => {
-        try {
-            usersList.value = <Array<UnwrapRef<User>>> await api.getList(userIds)
-        } catch (e) {
-            isListEmpty.value = true
-        }
-    }
-
-    const loadUser = async () => {
-        user = reactive(await api.getSingle({}))
-    }
-
-    return { usersList, loadUsersList, user, loadUser, isListEmpty }
+    return { user }
 }
 
-export const useUserStore = () => inject(userStoreSymbol)
+export const useUserStore = () => <IUserStore> inject(userStoreSymbol)

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps, reactive, ref } from "vue";
-import { User } from "@/core/entities/user";
+import { User } from "@/core/entities/user/user";
 import { useModalStore } from "@/stores/modal";
 
 defineProps({
