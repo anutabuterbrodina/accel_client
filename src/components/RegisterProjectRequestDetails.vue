@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import { useRequestStore } from "@/stores/request";
-import { IRegisterProjectRequestContext } from "@/core/entities/request/register-project-request-context.interface";
+import type { IRegisterProjectRequestContext } from "@/core/entities/request/register-project-request-context.interface";
 
 const { request } = useRequestStore()
 const content = <IRegisterProjectRequestContext> request.content

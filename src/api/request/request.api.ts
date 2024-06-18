@@ -119,18 +119,8 @@ export class RequestApi extends ApiManager {
         }
     }
 
-    public static async reject(userId: string, request: Request) {
-        if (!request.id || !request.rejectReason) {
-            alert('Не удалось отклонить')
-            return
-        }
+    public static async reject(data: IRejectRequest) {
         const url = this.formURL('reject', 'request')
-        const data: IRejectRequest = {
-            userId,
-            requestId: request.id,
-            rejectReason: request.rejectReason,
-            rejectMessage: request.rejectMessage || '',
-        }
 
         try {
             const result = await this.post(url, data)

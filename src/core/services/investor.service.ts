@@ -16,12 +16,7 @@ export class InvestorService {
         } )
     }
 
-    public static async editInterests(investor: Investor): Promise<void> {
-        if (!investor.id) {
-            alert('Не установлен ID проекта')
-            return
-        }
-
-        await InvestorApi.editInterests(investor.id, investor.interests)
+    public static async editInterests(id: string, interests: string[]): Promise<void> {
+        await InvestorApi.editInterests(id, interests)
     }
 }

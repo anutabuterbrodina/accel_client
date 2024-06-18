@@ -1,11 +1,12 @@
 import { inject } from "@vue/runtime-core";
-import { reactive } from "vue";
-import type { UnwrapNestedRefs, InjectionKey } from "vue";
+import { reactive, ref } from "vue";
+import type { Ref, UnwrapNestedRefs, InjectionKey } from "vue";
 import { Project } from "@/core/entities/project/project";
 import { ProjectApi } from "@/api/project/project.api";
 
 interface IProjectStore {
     project: UnwrapNestedRefs<Project>,
+    isBookmark: Ref<boolean>
     loadProject: (projectId: string) => Promise<void>,
     refreshStore: () => Promise<void>,
 }
@@ -13,12 +14,15 @@ interface IProjectStore {
 export const projectStoreSymbol = <InjectionKey<string>> Symbol('projectStore')
 
 export const createProjectStore = () => {
+    const isBookmark = ref(false)
+
     const project = reactive( new Project(
         '',
         '',
         <number> null,
         <number> null,
         [],
+        null,
         null,
         null,
         null,
@@ -38,7 +42,7 @@ export const createProjectStore = () => {
         project.status = result.status
         project.contactId = result.contactId
         project.createdAt = result.createdAt
-        project.createdAt = result.createdAt
+        project.ownerId = result.ownerId
     }
 
     const refreshStore = async () => {
@@ -55,7 +59,7 @@ export const createProjectStore = () => {
         project.createdAt = null
     }
 
-    return { project, loadProject, refreshStore }
+    return { project, loadProject, refreshStore, isBookmark }
 }
 
 export const useProjectStore = () => <IProjectStore> inject(projectStoreSymbol)

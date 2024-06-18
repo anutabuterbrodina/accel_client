@@ -28,7 +28,9 @@ const submitForm = () => {
 <template>
     <v-form v-model="isValid" class="w-100" @submit.prevent="submitForm" >
         <v-container>
-            <div style="width: 700px;">
+
+            <div style="width: 700px; max-height: calc(100vh - 200px); overflow-y: auto;">
+
                 <div v-show="action === 'editCommonData' || action === 'create'">
                     <v-text-field
                         v-model="project.name"
@@ -41,12 +43,11 @@ const submitForm = () => {
                     <v-textarea
                         v-model="project.description"
                         :counter="400"
-                        :rules="action === 'editBusinessData' ? [] : [requiredRule, (v) => limitRule(v, 400)]"
+                        :rules="action === 'editBusinessData' ? [] : [(v) => limitRule(v, 400)]"
                         label="Описание проекта"
                         no-resize
                         rows="10"
                         row-height="15"
-                        required
                         clearable
                         clear-icon="mdi-close-circle"
                     ></v-textarea>

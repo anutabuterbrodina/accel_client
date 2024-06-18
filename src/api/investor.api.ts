@@ -18,12 +18,13 @@ export class InvestorApi extends ApiManager {
                 result.requisites,
                 result.name,
                 result.description || '',
-                result.interests,
+                result.interestsList,
                 result.id,
-                result.members,
+                result.membersList,
                 result.isActive,
                 result.type,
                 result.createdAt || null,
+                result.ownerId || null,
             )
         } catch (e) {
             console.log( 'Не удалось загрузить инвестора' )
@@ -41,9 +42,9 @@ export class InvestorApi extends ApiManager {
                 new Requisites(),
                 item.name,
                 item?.description || '',
-                item.interests,
+                item.interestList,
                 item.id,
-                item.members,
+                item.memberList,
                 true,
                 item.type,
                 item.createdAt,
@@ -67,13 +68,37 @@ export class InvestorApi extends ApiManager {
 
     public static async editInterests(investorId: string, interests: string[]): Promise<void> {
         const url = this.formURL('edit-interests', 'investor')
-        const data = { interests }
+        const data = { investorId, interests }
 
         try {
             const result = await this.post(url, data)
 
         } catch (e) {
             alert('Не удалось изменить категории интересов')
+        }
+    }
+
+    public static async deactivate(investorId: string): Promise<void> {
+        const url = this.formURL('deactivate', 'investor')
+        const data = { investorId }
+
+        try {
+            const result = await this.post(url, data)
+
+        } catch (e) {
+            alert('Не удалось деактивировать')
+        }
+    }
+
+    public static async activate(investorId: string): Promise<void> {
+        const url = this.formURL('activate', 'investor')
+        const data = { investorId }
+
+        try {
+            const result = await this.post(url, data)
+
+        } catch (e) {
+            alert('Не удалось активировать')
         }
     }
 }

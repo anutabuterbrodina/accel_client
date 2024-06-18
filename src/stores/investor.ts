@@ -1,9 +1,10 @@
 import { inject } from "@vue/runtime-core";
+import type { InjectionKey, UnwrapNestedRefs } from "vue";
 import { reactive } from "vue";
-import type { UnwrapNestedRefs, InjectionKey } from "vue";
 import { Investor } from "@/core/entities/investor/investor";
 import { InvestorApi } from "@/api/investor.api";
 import { Requisites } from "@/core/entities/investor/requisites";
+import { EInvestorTypes } from "@/core/entities/investor/investor-types.interface";
 
 interface IInvestorStore {
     investor: UnwrapNestedRefs<Investor>,
@@ -22,6 +23,7 @@ export const createInvestorStore = () => {
         null,
         null,
         null,
+        EInvestorTypes.UNKNOWN,
         null,
         null,
     ))
@@ -37,6 +39,7 @@ export const createInvestorStore = () => {
         investor.isActive = result.isActive
         investor.type = result.type
         investor.createdAt = result.createdAt
+        investor.ownerId = result.ownerId
     }
 
     const refreshStore = async () => {

@@ -12,6 +12,7 @@ export class Investor {
         private _isActive: boolean | null = null,
         private _type: EInvestorTypes,
         private _createdAt: number | null = null,
+        private _ownerId: string | null = null,
     ) {}
 
     get requisites(): Requisites {
@@ -74,7 +75,7 @@ export class Investor {
         return this._type;
     }
 
-    set type(value: EInvestorTypes | null) {
+    set type(value: EInvestorTypes) {
         this._type = value;
     }
 
@@ -84,5 +85,13 @@ export class Investor {
 
     set createdAt(value: number | null) {
         this._createdAt = value;
+    }
+
+    get ownerId(): string | null {
+        return this._ownerId;
+    }
+
+    set ownerId(value: string | null) {
+        this._ownerId = value;
     }
 }

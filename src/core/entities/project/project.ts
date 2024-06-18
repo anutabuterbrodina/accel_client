@@ -12,7 +12,17 @@ export class Project {
         private _members:       string[] | null           = null,
         private _status:        EProjectStatuses | null   = null,
         private _contactId:     string | null             = null,
+        private _ownerId:       string | null             = null,
+        private _isBookmark:    boolean | null            = null,
     ) {}
+
+    get isBookmark(): boolean | null {
+        return this._isBookmark
+    }
+
+    set isBookmark(value: boolean) {
+        this._isBookmark = value
+    }
 
     get name(): string {
         return this._name
@@ -92,5 +102,13 @@ export class Project {
 
     set contactId(value: string | null) {
         this._contactId = value;
+    }
+
+    get ownerId(): string | null {
+        return this._ownerId;
+    }
+
+    set ownerId(value: string | null) {
+        this._ownerId = value;
     }
 }

@@ -38,7 +38,15 @@ export class RequestService {
                 investorType: content.type,
                 name: content.name,
                 description: content.description,
-                requisites: content.requisites,
+                requisites: {
+                    legalName: content.requisites.legalName,
+                    address: content.requisites.address,
+                    INN: content.requisites.INN,
+                    OGRN: content.requisites.OGRN,
+                    KPP: content.requisites.KPP,
+                    OKPO: content.requisites.OKPO,
+                    BIK: content.requisites.BIK,
+                },
                 tags: content.tags,
             } )
         }
@@ -57,6 +65,7 @@ export class RequestService {
 
         if ( request.type === ERequestTypes.CHANGE_INVESTOR_REQUISITES ) {
             const content = <IChangeInvestorRequisitesRequestContext>request.content
+            console.log(content)
             await RequestApi.createChangeInvestorRequisites( {
                 userId: request.creatorId,
                 comment: request.comment,
@@ -71,13 +80,13 @@ export class RequestService {
         await RequestApi.accept(requestId, userId)
     }
 
-    public static async reject(request: Request) {
+    public static async reject(request: Request, userId: string) {
         if (!request.id || !request.rejectReason) {
             alert('Не удалось найти ID или не установлена причина отказа')
             return
         }
         await RequestApi.reject({
-            userId: request.creatorId,
+            userId: userId,
             requestId: request.id,
             rejectReason: request.rejectReason,
             rejectMessage: request.rejectMessage || '',

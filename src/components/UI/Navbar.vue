@@ -3,7 +3,7 @@ import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
 import { AuthService } from "@/core/services/auth.service";
 import { EUserRoles } from "@/core/entities/user/user-roles.enum";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { EUserAccountTypes } from "@/core/entities/user/user-account-types.enum";
 
 const { isLoggedIn, currentUser, refreshStore } = useAuthStore()
@@ -15,10 +15,10 @@ const logout = () => {
     router.push({ name: 'home' })
 }
 
-const isUser = computed(() => currentUser.role === EUserRoles.COMMON_USER && isLoggedIn)
-const isModerator = computed(() => currentUser.role === EUserRoles.MODERATOR && isLoggedIn)
-const isProject = computed(() => currentUser.type === EUserAccountTypes.PROJECT && isLoggedIn)
-const isInvestor = computed(() => currentUser.type === EUserAccountTypes.INVESTOR && isLoggedIn)
+const isUser = computed(() => currentUser.role === EUserRoles.COMMON_USER && isLoggedIn.value)
+const isModerator = computed(() => currentUser.role === EUserRoles.MODERATOR && isLoggedIn.value)
+const isProject = computed(() => currentUser.type === EUserAccountTypes.PROJECT && isLoggedIn.value)
+const isInvestor = computed(() => currentUser.type === EUserAccountTypes.INVESTOR && isLoggedIn.value)
 
 </script>
 

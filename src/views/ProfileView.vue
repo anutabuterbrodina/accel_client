@@ -2,12 +2,19 @@
 import UserForm from "@/components/forms/UserForm.vue";
 import Modal from "@/components/UI/Modal.vue";
 import { User } from "@/core/entities/user/user";
-import { reactive } from "vue";
+import { onMounted, reactive } from "vue";
 import { useModalStore } from "@/stores/modal";
+import { useAuthStore } from "@/stores/auth";
+import { useUserStore } from "@/stores/user";
 
-const user = reactive(new User('user4', 'User 4', 'Test', 'user', 'test4@test.com', '81234567894'));
+const { currentUser } = useAuthStore()
+const { loadUser } = useUserStore()
 
 const { setVisibility } = useModalStore()
+
+onMounted(async () => {
+    await loadUser()
+})
 
 </script>
 

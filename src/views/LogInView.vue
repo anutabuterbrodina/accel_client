@@ -4,7 +4,7 @@ import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
 import { AuthService } from "@/core/services/auth.service";
 
-const { isLoggedIn, refreshStore } = useAuthStore()
+const { isLoggedIn, refreshStore, currentUser } = useAuthStore()
 const router = useRouter()
 
 if (isLoggedIn.value) {
@@ -15,9 +15,10 @@ const handleSubmitForm = async (email: string, password: string) => {
     await AuthService.login(email, password)
 
     refreshStore()
+    console.log(currentUser)
 
     if (isLoggedIn.value) {
-        await router.push({ name: 'home' })
+        router.push({ name: 'home' })
     }
 }
 </script>

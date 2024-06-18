@@ -1,12 +1,12 @@
 import { inject } from "@vue/runtime-core";
-import type { Ref, InjectionKey, UnwrapNestedRefs } from "vue";
+import type { InjectionKey, UnwrapNestedRefs, ComputedRef } from "vue";
 import { computed, reactive, ref } from "vue";
 import { AuthAPI } from "@/api/auth/auth.api";
 import type { IPayload } from "@/core/helpers/payload.interface";
 
 interface IAuthStore {
     currentUser: UnwrapNestedRefs<IPayload>,
-    isLoggedIn: Ref<boolean>,
+    isLoggedIn: ComputedRef<boolean>,
     refreshStore: () => void,
 }
 
@@ -23,6 +23,7 @@ export const createAuthStore = () => {
         currentUser.id = payload.id
         currentUser.email = payload.email
         currentUser.role = payload.role
+        currentUser.type = payload.type
 
         authToken.value = AuthAPI.getAuthToken()
     }

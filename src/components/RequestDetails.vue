@@ -13,6 +13,10 @@ import { User } from "@/core/entities/user/user";
 import { ERequestTypes } from "@/core/entities/request/request-types.enum";
 import RegisterProjectRequestDetails from "@/components/RegisterProjectRequestDetails.vue";
 import { Constants } from "@/core/static/constants";
+import RegisterInvestorRequestDetails from "@/components/RegisterInvestorRequestDetails.vue";
+import ChangeProjectBusinessDataRequestDetails from "@/components/ChangeProjectBusinessDataRequestDetails.vue";
+import ChangeInvestorRequisitesRequestDetails from "@/components/ChangeInvestorRequisitesRequestDetails.vue";
+import { RequestService } from "@/core/services/request.service";
 
 const { currentUser } = useAuthStore()
 const { request, loadRequest } = useRequestStore()
@@ -27,13 +31,13 @@ defineProps({
 })
 
 const accept = async () => {
-    await RequestApi.accept(requestId, currentUser.id)
+    await RequestService.accept(requestId, currentUser.id)
     await loadRequest(requestId)
     refreshModalStore()
 }
 
 const reject = async () => {
-    await RequestApi.reject(currentUser.id, request)
+    await RequestService.reject(request, currentUser.id)
     await loadRequest(requestId)
     refreshModalStore()
 }
@@ -46,7 +50,7 @@ onMounted(async () => {
 </script>
 
 <template>
-    <v-card class="mb-10">
+    <v-card class="mb-5">
         <v-card-item class="py-5">
             <v-row>
                 <v-col>
@@ -122,29 +126,41 @@ onMounted(async () => {
     </v-card>
 
 
-    <div v-if="request.type === ERequestTypes.REGISTER_PROJECT">
-        <RegisterProjectRequestDetails/>
-    </div>
 
-
-
-    <v-card>
-        <div v-if="isModerator && request.status === ERequestStatuses.ON_MODERATION">
-            <v-btn color="primary" @click="accept">
+    <v-row v-if="isModerator && request.status === ERequestStatuses.ON_MODERATION" class="mb-5">
+        <v-col>
+            <v-btn color="primary" class="w-50" @click="accept">
                 Принять
             </v-btn>
-            <v-btn color="primary" @click="setVisibility(true)">
+        </v-col>
+        <v-col>
+            <v-btn color="primary" class="w-50" @click="setVisibility(true)">
                 Отказать
             </v-btn>
-        </div>
+        </v-col>
+    </v-row>
 
-        <Modal>
-            <RequestRejectForm
-                @reject="reject"
-            />
-        </Modal>
 
-    </v-card>
+    <div v-if="request.type === ERequestTypes.REGISTER_PROJECT" class="mb-5">
+        <RegisterProjectRequestDetails class="pb-5"/>
+    </div>
+
+    <div v-if="request.type === ERequestTypes.REGISTER_INVESTOR" class="mb-5">
+        <RegisterInvestorRequestDetails class="pb-5"/>
+    </div>
+
+    <div v-if="request.type === ERequestTypes.CHANGE_PROJECT_BUSINESS_DATA" class="mb-5">
+        <ChangeProjectBusinessDataRequestDetails class="pb-5"/>
+    </div>
+
+    <div v-if="request.type === ERequestTypes.CHANGE_INVESTOR_REQUISITES" class="mb-5">
+        <ChangeInvestorRequisitesRequestDetails class="pb-5"/>
+    </div>
+    <Modal>
+        <RequestRejectForm
+            @reject="reject"
+        />
+    </Modal>
 </template>
 
 <style scoped>

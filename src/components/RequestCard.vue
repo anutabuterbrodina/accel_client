@@ -53,12 +53,12 @@ defineProps({
                 <v-col>
                     <v-card-subtitle>
                         <span v-if="(request.type === ERequestTypes.CHANGE_PROJECT_BUSINESS_DATA)" @click.prevent>
-                            <router-link :to="{ name: 'project', params: { projectId: request.projectId } }">
+                            <router-link :to="{ name: 'project', params: { projectId: request.projectId ?? 'null' } }">
                                 <strong>По проекту:</strong> {{ request.projectId }}
                             </router-link>
                         </span>
                         <span v-if="(request.type === ERequestTypes.CHANGE_INVESTOR_REQUISITES)" @click.prevent>
-                            <router-link :to="{ name: 'investor', params: { investorId: request.investorId } }">
+                            <router-link :to="{ name: 'investor', params: { investorId: request.investorId ?? 'null' } }">
                                 <strong>По инвестору:</strong> {{ request.investorId }}
                             </router-link>
                         </span>

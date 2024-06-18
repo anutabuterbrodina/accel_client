@@ -6,17 +6,23 @@ import { ProjectApi } from "@/api/project/project.api";
 import { useAuthStore } from "@/stores/auth";
 import { useSortStore } from "@/stores/sort";
 import { useFilterStore } from "@/stores/filter";
+import { useProjectStore } from "@/stores/project";
 
 
 const { currentUser } = useAuthStore()
 const { loadProjectsList } = useProjectsListStore()
+const { isBookmark } = useProjectStore()
 const { sort } = useSortStore()
 const { searchQuery, projectsFilters } = useFilterStore()
 
-const bookmarks = ref()
+const bookmarks = ref([])
 
 onMounted(async () => {
     bookmarks.value = await ProjectApi.getBookmarks(currentUser.id)
+
+    if (bookmarks.value.length === 0) {
+        bookmarks.value = ['abd3994f-7c30-43b6-bb57-f25a5cfa436d']
+    }
 
     await loadProjectsList(projectsFilters, null, bookmarks.value, searchQuery.value, sort)
 })

@@ -79,4 +79,28 @@ export class ProjectApi extends ApiManager {
             alert('Не удалось изменить данные описания проекта')
         }
     }
+
+    public static async archive(projectId: string): Promise<void> {
+        const url = this.formURL( 'archive', 'project' )
+        const data = { projectId }
+
+        try {
+            const result = await this.post( url, data )
+
+        } catch ( e ) {
+            alert( 'Не удалось архивировать' )
+        }
+    }
+
+    public static async unarchive(projectId: string): Promise<void> {
+        const url = this.formURL('unarchive', 'project')
+        const data = { projectId }
+
+        try {
+            const result = await this.post(url, data)
+
+        } catch (e) {
+            alert('Не удалось деархивировать')
+        }
+    }
 }

@@ -8,6 +8,7 @@ export interface IProject {
     investmentMin: number,
     investmentMax: number,
     contactId: string,
+    ownerId: string,
     createdAt: number,
     tagsList: string[],
     membersList: string[],

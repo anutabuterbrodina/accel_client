@@ -3,7 +3,6 @@ import RequestsListFilter from "@/components/RequestsListFilter.vue";
 import RequestCard from "@/components/RequestCard.vue";
 import CardList from './UI/CardList.vue'
 import Sort from "@/components/UI/Sort.vue";
-import SearchQuery from "@/components/UI/SearchQuery.vue";
 import { useRouter } from "vue-router";
 import { Constants } from "@/core/static/constants";
 import { useRequestsListStore } from "@/stores/requestsList";
