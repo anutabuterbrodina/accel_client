@@ -8,6 +8,8 @@ import { createInvestorsListStore, investorsListStoreSymbol } from "@/stores/inv
 import { createRequestStore, requestStoreSymbol } from "@/stores/request";
 import { createRequestsListStore, requestsListStoreSymbol } from "@/stores/requestsList";
 import { createModalStore, modalStoreSymbol } from "@/stores/modal";
+import { createSortStore, sortStoreSymbol } from "@/stores/sort";
+import { createFilterStore, filterStoreSymbol } from "@/stores/filter";
 
 export const composableStores = [
     { key: authStoreSymbol, value: createAuthStore() },
@@ -20,4 +22,6 @@ export const composableStores = [
     { key: requestStoreSymbol, value: createRequestStore() },
     { key: requestsListStoreSymbol, value: createRequestsListStore() },
     { key: modalStoreSymbol, value: createModalStore() },
+    { key: sortStoreSymbol, value: createSortStore() },
+    { key: filterStoreSymbol, value: createFilterStore() },
 ]

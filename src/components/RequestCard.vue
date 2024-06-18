@@ -6,9 +6,9 @@ import { Constants } from "@/core/static/constants";
 import { ERequestTypes } from "@/core/entities/request/request-types.enum";
 import { ERequestStatuses } from "@/core/entities/request/request-statuses.enum";
 
+
 defineProps({
     request: Object as PropType<Request>,
-    isModerator: Boolean,
 })
 </script>
 
@@ -22,7 +22,7 @@ defineProps({
             <v-row>
                 <v-col>
                     <v-card-title>
-                        {{ Constants.getRequestTypeNameByValue(request.type) }}
+                        Тип: {{ Constants.getRequestTypeNameByValue(request.type) }}
                     </v-card-title>
                     <v-card-subtitle>
                         <span>
@@ -52,11 +52,15 @@ defineProps({
             <v-row>
                 <v-col>
                     <v-card-subtitle>
-                        <span v-if="(request.type === ERequestTypes.CHANGE_PROJECT_BUSINESS_DATA)">
-                            <strong>По проекту:</strong> {{ request.projectId }}
+                        <span v-if="(request.type === ERequestTypes.CHANGE_PROJECT_BUSINESS_DATA)" @click.prevent>
+                            <router-link :to="{ name: 'project', params: { projectId: request.projectId } }">
+                                <strong>По проекту:</strong> {{ request.projectId }}
+                            </router-link>
                         </span>
-                        <span v-if="(request.type === ERequestTypes.CHANGE_INVESTOR_REQUISITES)">
-                            <strong>По инвестору:</strong> {{ request.investorId }}
+                        <span v-if="(request.type === ERequestTypes.CHANGE_INVESTOR_REQUISITES)" @click.prevent>
+                            <router-link :to="{ name: 'investor', params: { investorId: request.investorId } }">
+                                <strong>По инвестору:</strong> {{ request.investorId }}
+                            </router-link>
                         </span>
                     </v-card-subtitle>
 

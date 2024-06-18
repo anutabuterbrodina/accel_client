@@ -6,18 +6,18 @@ import { ERequestRejectReasons } from "@/core/entities/request/request-reject-re
 export class Request {
 
     constructor(
-        private readonly _type:          ERequestTypes,
-        private readonly _creatorId:     string,
-        private readonly _contactEmail:  string,
-        private          _comment:       string = '',
-        private readonly _content:       TRequestContent | null       = null,
-        private          _rejectReason:  ERequestRejectReasons | null = null,
-        private          _rejectMessage: string | null                = null,
-        private readonly _id:            string | null                = null,
-        private readonly _status:        ERequestStatuses | null      = null,
-        private readonly _projectId:     string | null                = null,
-        private readonly _investorId:    string | null                = null,
-        private readonly _createdAt:     number | null                = null,
+        private _type:          ERequestTypes,
+        private _creatorId:     string,
+        private _contactEmail:  string,
+        private _comment:       string = '',
+        private _content:       TRequestContent | null       = null,
+        private _rejectReason:  ERequestRejectReasons | null = null,
+        private _rejectMessage: string | null                = null,
+        private _id:            string | null                = null,
+        private _status:        ERequestStatuses | null      = null,
+        private _projectId:     string | null                = null,
+        private _investorId:    string | null                = null,
+        private _createdAt:     number | null                = null,
     ) {}
 
     get type(): ERequestTypes {
@@ -78,5 +78,41 @@ export class Request {
 
     get createdAt(): number | null {
         return this._createdAt
+    }
+
+    set type(value: ERequestTypes) {
+        this._type = value;
+    }
+
+    set creatorId(value: string) {
+        this._creatorId = value;
+    }
+
+    set contactEmail(value: string) {
+        this._contactEmail = value;
+    }
+
+    set content(value: TRequestContent | null) {
+        this._content = value;
+    }
+
+    set id(value: string | null) {
+        this._id = value;
+    }
+
+    set status(value: ERequestStatuses | null) {
+        this._status = value;
+    }
+
+    set projectId(value: string | null) {
+        this._projectId = value;
+    }
+
+    set investorId(value: string | null) {
+        this._investorId = value;
+    }
+
+    set createdAt(value: number | null) {
+        this._createdAt = value;
     }
 }

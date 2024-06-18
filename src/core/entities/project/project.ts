@@ -2,16 +2,16 @@ import { EProjectStatuses } from "@/core/entities/project/project-statuses.enum"
 
 export class Project {
     constructor(
-        private          _name:          string,
-        private          _description:   string,
-        private          _investmentMin: number,
-        private          _investmentMax: number,
-        private          _tags:          string[],
-        private readonly _id:            string | null             = null,
-        private readonly _createdAt:     number | null             = null,
-        private readonly _members:       string[] | null           = null,
-        private readonly _status:        EProjectStatuses | null   = null,
-        private readonly _contactId:     string | null             = null,
+        private _name:          string,
+        private _description:   string,
+        private _investmentMin: number,
+        private _investmentMax: number,
+        private _tags:          string[],
+        private _id:            string | null             = null,
+        private _createdAt:     number | null             = null,
+        private _members:       string[] | null           = null,
+        private _status:        EProjectStatuses | null   = null,
+        private _contactId:     string | null             = null,
     ) {}
 
     get name(): string {
@@ -72,5 +72,25 @@ export class Project {
 
     get contactId(): string | null {
         return this._contactId
+    }
+
+    set id(value: string | null) {
+        this._id = value;
+    }
+
+    set createdAt(value: number | null) {
+        this._createdAt = value;
+    }
+
+    set members(value: string[] | null) {
+        this._members = value;
+    }
+
+    set status(value: EProjectStatuses | null) {
+        this._status = value;
+    }
+
+    set contactId(value: string | null) {
+        this._contactId = value;
     }
 }

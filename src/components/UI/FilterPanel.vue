@@ -3,11 +3,11 @@
 </script>
 
 <template>
-    <v-col cols="3">
+    <v-container class="mt-0 pt-0">
         <slot>
 
         </slot>
-    </v-col>
+    </v-container>
 </template>
 
 <style scoped>

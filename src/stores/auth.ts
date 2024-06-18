@@ -7,7 +7,7 @@ import type { IPayload } from "@/core/helpers/payload.interface";
 interface IAuthStore {
     currentUser: UnwrapNestedRefs<IPayload>,
     isLoggedIn: Ref<boolean>,
-    refreshStore: Function,
+    refreshStore: () => void,
 }
 
 export const authStoreSymbol = <InjectionKey<string>> Symbol('authStore')

@@ -2,7 +2,7 @@ import { inject } from "@vue/runtime-core";
 import { ref } from "vue";
 import type { Ref, InjectionKey } from "vue";
 import { User } from "@/core/entities/user/user";
-import { UserApi } from "@/api/user.api";
+import { UserApi } from "@/api/user/user.api";
 
 interface IUsersListStore {
     usersList: Ref<User[]>

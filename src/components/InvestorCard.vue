@@ -30,7 +30,7 @@ const reduct = (str: string) => str.substring( 0, 50 ) + '...'
         </v-card-text>
 
         <v-chip
-            v-for="interest in investor.interestList"
+            v-for="interest in investor.interests"
             class="ma-2"
             color="pink"
             label

@@ -3,6 +3,8 @@ import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
 import { AuthService } from "@/core/services/auth.service";
 import { EUserRoles } from "@/core/entities/user/user-roles.enum";
+import { computed, ref } from "vue";
+import { EUserAccountTypes } from "@/core/entities/user/user-account-types.enum";
 
 const { isLoggedIn, currentUser, refreshStore } = useAuthStore()
 const router = useRouter()
@@ -12,6 +14,12 @@ const logout = () => {
     refreshStore()
     router.push({ name: 'home' })
 }
+
+const isUser = computed(() => currentUser.role === EUserRoles.COMMON_USER && isLoggedIn)
+const isModerator = computed(() => currentUser.role === EUserRoles.MODERATOR && isLoggedIn)
+const isProject = computed(() => currentUser.type === EUserAccountTypes.PROJECT && isLoggedIn)
+const isInvestor = computed(() => currentUser.type === EUserAccountTypes.INVESTOR && isLoggedIn)
+
 </script>
 
 <template>
@@ -23,22 +31,22 @@ const logout = () => {
                         <v-app-bar-title>ACCEL</v-app-bar-title>
                     </router-link>
 
-                    <div v-if="currentUser.role === EUserRoles.COMMON_USER" class="ml-15" style="display: flex; justify-content: flex-start">
-                        <router-link :to="{ name: 'userProjects', params: { userId: currentUser.id } }" class="ml-10" style="color: inherit">
+                    <div v-if="isUser" class="ml-15" style="display: flex; justify-content: flex-start">
+                        <router-link :to="{ name: 'userProjects', params: { userId: currentUser.id } }" class="ml-10" style="color: inherit" v-if="isProject">
                             <h3>Мои проекты</h3>
                         </router-link>
-                        <router-link :to="{ name: 'userInvestors', params: { userId: currentUser.id } }" class="ml-10" style="color: inherit">
+                        <router-link :to="{ name: 'userInvestors', params: { userId: currentUser.id } }" class="ml-10" style="color: inherit" v-if="isInvestor">
                             <h3>Мои инвесторы</h3>
                         </router-link>
                         <router-link :to="{ name: 'userRequests', params: { userId: currentUser.id } }" class="ml-10" style="color: inherit">
                             <h3>Мои заявки</h3>
                         </router-link>
-                        <router-link :to="{ name: 'bookmarks', params: { userId: currentUser.id } }" class="ml-10" style="color: inherit">
+                        <router-link :to="{ name: 'bookmarks', params: { userId: currentUser.id } }" class="ml-10" style="color: inherit" v-if="isInvestor">
                             <h3>Мои закладки</h3>
                         </router-link>
                     </div>
 
-                    <div v-if="currentUser.role === EUserRoles.MODERATOR" class="ml-15" style="display: flex; justify-content: flex-start">
+                    <div v-if="isModerator" class="ml-15" style="display: flex; justify-content: flex-start">
                         <router-link :to="{ name: 'requests' }" class="ml-10" style="color: inherit">
                             <h3>Все заявки</h3>
                         </router-link>
@@ -59,13 +67,13 @@ const logout = () => {
                 <v-row class="text-center">
                     <v-app-bar-title>
                         <router-link :to="{ name: 'projects' }">
-                            ПРОЕКТЫ
+                            ВСЕ ПРОЕКТЫ
                         </router-link>
                     </v-app-bar-title>
 
                     <v-app-bar-title>
                         <router-link :to="{ name: 'investors' }">
-                            ИНВЕСТОРЫ
+                            ВСЕ ИНВЕСТОРЫ
                         </router-link>
                     </v-app-bar-title>
                 </v-row>

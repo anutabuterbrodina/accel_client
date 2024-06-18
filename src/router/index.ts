@@ -6,13 +6,14 @@ import SignUpView from '../views/SignUpView.vue'
 import ProfileView from '../views/ProfileView.vue'
 import ProjectsListView from '../views/ProjectsListView.vue'
 import UserProjectsListView from '../views/UserProjectsListView.vue'
-import InvestorsView from '../views/InvestorsView.vue'
 import ProjectView from '../views/ProjectView.vue'
+import InvestorsListView from '../views/InvestorsListView.vue'
+import UserInvestorsListView from '../views/UserInvestorsListView.vue'
 import InvestorView from '../views/InvestorView.vue'
 import RequestView from '../views/RequestView.vue'
 import UserRequestsListView from '../views/UserRequestsListView.vue'
 import ModeratorRequestsListView from '../views/ModeratorRequestsListView.vue'
-import BookmarksView from '../views/BookmarksView.vue'
+import BookmarksListView from '../views/BookmarksListView.vue'
 
 const router = createRouter(<RouterOptions> {
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -55,12 +56,12 @@ const router = createRouter(<RouterOptions> {
         {
             path: '/investors',
             name: 'investors',
-            component: InvestorsView
+            component: InvestorsListView
         },
         {
             path: '/u/:userId/investors',
             name: 'userInvestors',
-            component: InvestorsView
+            component: UserInvestorsListView
         },
         {
             path: '/investor/:investorId',
@@ -78,14 +79,14 @@ const router = createRouter(<RouterOptions> {
             component: UserRequestsListView
         },
         {
-            path: '/u/:userId/request/:requestId',
+            path: '/request/:requestId',
             name: 'request',
             component: RequestView
         },
         {
             path: '/u/:userId/bookmarks',
             name: 'bookmarks',
-            component: BookmarksView
+            component: BookmarksListView
         },
         // {
         //     path: '/:pathMatch(.*)',

@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { defineEmits, ref } from "vue";
+import { defineEmits, ref, watch } from "vue";
 import { requiredRule, limitRule, phoneRule, emailRule } from "@/components/forms/validators";
 import { useUserStore } from "@/stores/user";
+import { Constants } from "@/core/static/constants";
 
 const { user } = useUserStore()
 const emit = defineEmits(['signup'])
@@ -10,6 +11,11 @@ const isValid = ref(false)
 const passwordCheckRules = (v: string) => v === password.value || 'Пароли должны совпадать'
 const password = ref('')
 const passwordCheck = ref('')
+const type = ref(null)
+
+watch(type, () => {
+    user.type = Constants.getUserAccountTypeValueByName(type.value)
+})
 
 const submitForm = () => {
     if (!isValid.value) {
@@ -68,6 +74,19 @@ const submitForm = () => {
 
             <v-row>
                 <v-col>
+                    <v-select
+                        v-model="type"
+                        :items="Constants.getUserAccountTypeNames()"
+                        :rules="[requiredRule]"
+                        label="Выберите подходящую опцию"
+                        chips
+                        flat
+                    ></v-select>
+                </v-col>
+            </v-row>
+
+            <v-row>
+                <v-col>
                     <v-text-field
                         v-model="password"
                         :rules="[requiredRule]"
@@ -80,7 +99,7 @@ const submitForm = () => {
                 <v-col>
                     <v-text-field
                         v-model="passwordCheck"
-                        :rules="[ passwordCheckRules, requiredRule]"
+                        :rules="[passwordCheckRules, requiredRule]"
                         label="Подтвердите пароль"
                         type="password"
                         required

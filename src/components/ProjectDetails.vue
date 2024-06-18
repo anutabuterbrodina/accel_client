@@ -1,105 +1,91 @@
 <script setup lang="ts">
-import RightInfoPanel from "@/components/UI/RightInfoPanel.vue";
-import { defineProps, PropType, } from "vue";
-import { Project } from "@/core/entities/project";
+import { useProjectStore } from "@/stores/project";
+import { onMounted, ref, toRaw } from "vue";
+import { UserApi } from "@/api/user/user.api";
 import { User } from "@/core/entities/user/user";
-import { useModalStore } from "@/stores/modal";
+import { useRoute } from "vue-router";
 
-defineProps({
-    project: Object as PropType<Project>,
-    members: Array as PropType<User[]>,
-    isEditable: Boolean,
+
+const { project, loadProject } = useProjectStore()
+const route = useRoute()
+const members = ref<User[]>([])
+const contact = ref<User>()
+
+onMounted(async () => {
+    await loadProject(<string> route.params.projectId)
+    contact.value = await UserApi.getSingle( toRaw(project.contactId) || '' )
+    members.value = await UserApi.getList( toRaw(project.members) || [] )
 })
-
-const { setVisibility } = useModalStore()
-
 </script>
 
 <template>
-    <div style="display: flex">
-        <div style="width: 100%">
-            <div style="display: flex">
-                <div style="width: 100%">
-                    <h1>{{ project.name }}</h1>
-                </div>
+    <v-row class="mt-3">
+        <v-col cols="7">
+            <v-card>
+                <v-card-title>
+                    {{ project.name }}
+                </v-card-title>
 
-                <v-btn color="primary" v-if="isEditable">
-                    Редактировать
-                    <v-menu activator="parent">
-                        <v-list class="flex-column" style="display: flex !important">
-                            <div @click="() => { setVisibility(true); $emit('update', 'editCommonData') }">
-                                Редактирвоать описание
-                            </div>
-                            <div @click="() => { setVisibility(true); $emit('update', 'editBusinessData') }">
-                                Редактирвоать данные
-                            </div>
-                        </v-list>
-                    </v-menu>
-                </v-btn>
-            </div>
+                <v-card-text>
+                    {{ project.description }}
+                </v-card-text>
+            </v-card>
+        </v-col>
 
-            <div class="ProjectDetails__body">
-                <h2>Описание проекта</h2>
-                <p>{{ project.description }}</p>
-            </div>
+        <v-col cols="5">
+            <v-card class="mb-10">
+                <v-card-title>Контакт:</v-card-title>
+                <v-card-item>
+                    <v-row>
+                        <v-col cols="4"><v-card-subtitle>Email</v-card-subtitle></v-col>
+                        <v-col><v-card-subtitle>{{ contact?.email || '' }}</v-card-subtitle></v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col cols="4"><v-card-subtitle>Телефон</v-card-subtitle></v-col>
+                        <v-col><v-card-subtitle>{{ contact?.phone || '' }}</v-card-subtitle></v-col>
+                    </v-row>
+                </v-card-item>
 
-            <div>
-                <button>БП</button>
-            </div>
-        </div>
-
-        <RightInfoPanel>
-            <div class="RightInfoPanel__author">Автор: <span>{{ project.contact }}</span></div>
-            <div>
+                <v-card-title>Категории:</v-card-title>
                 <v-chip
                     v-for="tag in project.tags"
                     class="ma-2"
                     color="pink"
                     label
                     text-color="white"
+                    size="x-small"
                 >
                     <v-icon start icon="mdi-label"></v-icon>
                     {{ tag }}
                 </v-chip>
-            </div>
-            <div>
-                <div>Размер инвестиций</div>
-                <div class="">От {{ project.investmentMin }} руб.</div>
-                <div class="">До {{ project.investmentMax }} руб.</div>
-            </div>
 
-            <div>
-                <div v-for="member in members">
-                    {{ member.name }}
-                    {{ member.email }}
-                </div>
-            </div>
-        </RightInfoPanel>
-    </div>
+                <v-card-title>Размер инвестиций:</v-card-title>
+                <v-card-item>
+                    <v-card-subtitle>От {{ project.investmentMin }} руб.</v-card-subtitle>
+                    <v-card-subtitle>До {{ project.investmentMax }} руб.</v-card-subtitle>
+                </v-card-item>
+            </v-card>
+
+
+            <v-card>
+                <v-card-title>Команда:</v-card-title>
+                <v-card-text v-for="member in members">
+                    {{ member.name }} {{ member.surname }}
+                </v-card-text>
+
+<!--                <v-card-actions>-->
+<!--                    -->
+<!--                </v-card-actions>-->
+            </v-card>
+        </v-col>
+
+        <slot>
+
+        </slot>
+
+    </v-row>
 </template>
 
 <style scoped>
-.ProjectDetails {
-    display: flex;
-    width: 100%;
-}
-.ProjectDetails__content {
-    width: 100%;
-    padding: 15px 25px;
-}
-.ProjectDetails__header {
-    display: flex;
-}
-.ProjectDetails__title {
-    width: 100%;
-}
-.ProjectDetails__body {
-}
-.ProjectDetails__reductButton {
-    display: flex;
-    background-color: darkgrey;
-    width: 100px;
-    height: 40px;
-    border-radius: 5px;
-}
+
 </style>

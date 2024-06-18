@@ -1,8 +1,9 @@
 import { inject } from "@vue/runtime-core";
-import { reactive } from "vue";
 import type { InjectionKey, UnwrapNestedRefs } from "vue";
-import { UserApi } from "@/api/user.api";
+import { reactive } from "vue";
 import { User } from "@/core/entities/user/user";
+import { EUserAccountTypes } from "@/core/entities/user/user-account-types.enum";
+import { EUserRoles } from "@/core/entities/user/user-roles.enum";
 
 interface IUserStore {
     user: UnwrapNestedRefs<User>
@@ -16,6 +17,9 @@ export const createUserStore = () => {
         '',
         '',
         '',
+        EUserAccountTypes.ANONYMOUS,
+        null,
+        EUserRoles.ANONYMOUS,
     ))
 
     return { user }

@@ -1,4 +1,4 @@
-import type { IRequestFilters } from "@/api/request/request-filters.interface";
+import type { IRequestFilters } from "@/api/request/request-list-request.interface";
 import { Constants } from "@/core/static/constants";
 
 export class RequestFiltersFormatter {

@@ -1,15 +1,20 @@
 import { inject } from "@vue/runtime-core";
-import { reactive, ref, toRaw,  } from "vue";
-import type { UnwrapRef, UnwrapNestedRefs, Ref, InjectionKey } from "vue";
-import { Project } from "@/core/entities/project";
+import { ref } from "vue";
+import type { UnwrapRef, Ref, InjectionKey } from "vue";
+import { Project } from "@/core/entities/project/project";
 import { ProjectApi } from "@/api/project/project.api";
-import type { IProjectFilters } from "@/api/project/project-filters.interface";
-import { ProjectFiltersFormatter } from "@/core/helpers/project-filters-formatter";
+import type { IProjectsFilters } from "@/core/helpers/projects-filters.interface";
 
 interface IProjectsListStore {
     projectsList: Ref<Project[]>,
-    projectsFilters: UnwrapNestedRefs<IProjectFilters>,
-    refreshStore: (userId: string | null, projectIds?: string[] | null) => Promise<void>,
+    loadProjectsList: (
+        filters: IProjectsFilters,
+        userId?: string | null,
+        projectIds?: string[] | null,
+        nameSearchString?: string | null,
+        sort?: { sortOrder: string | null, sortOption: string | null },
+        limit?: number | null,
+    ) => Promise<void>,
 }
 
 export const projectsListStoreSymbol = <InjectionKey<string>> Symbol('projectsListStore')
@@ -17,28 +22,28 @@ export const projectsListStoreSymbol = <InjectionKey<string>> Symbol('projectsLi
 export const createProjectsListStore = () => {
     const projectsList = ref<Project[]>([])
 
-    const projectsFilters = reactive<IProjectFilters>({
-        userId: null,
-        limit: null,
-        tags: null,
-        nameSearchString: null,
-        investmentMin: null,
-        investmentMax: null,
-        sortOption: 'По умолчанию',
-        sortOrder: null,
-    })
+    const loadProjectsList = async (
+        filters: IProjectsFilters,
+        userId: string | null = null,
+        projectIds: string[] | null = null,
+        nameSearchString: string | null = null,
+        sort: { sortOrder: string | null, sortOption: string | null },
+        limit: number | null = null,
 
-    const refreshStore = async (userId: string | null = null, projectIds: string[] | null = null): Promise<void> => {
-        projectsFilters.userId = userId || projectsFilters.userId
+    ): Promise<void> => {
 
-        projectsList.value = <UnwrapRef<Project[]>> await ProjectApi.getList(
-            ProjectFiltersFormatter.format( <IProjectFilters>{ ...projectsFilters } ),
+        projectsList.value = <UnwrapRef<Project[]>> await ProjectApi.getList({
+            ...filters,
+            userId,
             projectIds,
-        )
+            nameSearchString,
+            limit,
+            sortOption: sort.sortOption,
+            sortOrder: sort.sortOrder,
+        })
     }
 
-
-    return { projectsList, projectsFilters, refreshStore }
+    return { projectsList, loadProjectsList }
 }
 
 export const useProjectsListStore = () => <IProjectsListStore> inject(projectsListStoreSymbol)

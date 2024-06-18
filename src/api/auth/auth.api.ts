@@ -3,6 +3,7 @@ import { User } from "@/core/entities/user/user";
 import type { IAuthResult } from "@/api/auth/auth-result.interface";
 import type { IPayload } from "@/core/helpers/payload.interface";
 import { EUserRoles } from "@/core/entities/user/user-roles.enum";
+import { EUserAccountTypes } from "@/core/entities/user/user-account-types.enum";
 
 interface ISignUp {
     name: string,
@@ -10,6 +11,7 @@ interface ISignUp {
     email: string,
     phone: string,
     password: string
+    type: EUserAccountTypes,
 }
 
 interface ILogIn {
@@ -19,15 +21,8 @@ interface ILogIn {
 
 export class AuthAPI extends ApiManager {
 
-    public static async signup(user: User, password: string): Promise<string> {
+    public static async signup(data: ISignUp): Promise<string> {
         const url = this.formURL('signup', 'users')
-        const data: ISignUp = {
-            name: user.name,
-            surname: user.surname,
-            email: user.email,
-            phone: user.phone,
-            password,
-        }
 
         const result: IAuthResult = await this.post(url, data)
 
@@ -62,7 +57,7 @@ export class AuthAPI extends ApiManager {
         const payload = localStorage.getItem('payload')
 
         if (!payload)
-            return { id: 'unknown', email: 'unknown', role: EUserRoles.ANONYMOUS }
+            return { id: 'unknown', email: 'unknown', role: EUserRoles.ANONYMOUS, type: EUserAccountTypes.ANONYMOUS }
 
         return JSON.parse(payload)
     }

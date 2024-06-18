@@ -1,4 +1,4 @@
-export interface IRequestFilters {
+export interface IRequestsListRequest {
     limit: number | null,
     statuses: string[] | null,
     userId: string | null,

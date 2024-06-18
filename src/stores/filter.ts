@@ -1,106 +1,67 @@
 import { inject } from "@vue/runtime-core";
-import { computed, reactive, ref, toRefs } from "vue";
-import type { InjectionKey } from "vue";
+import { reactive, ref } from "vue";
+import type { Ref, InjectionKey } from "vue";
+import type { IProjectsFilters } from "@/core/helpers/projects-filters.interface";
+import type { IRequestsFilters } from "@/core/helpers/requests-filters.interface";
+import type { IInvestorsFilters } from "@/core/helpers/investors-filters.interface";
+
+interface IFilterStore {
+    searchQuery: Ref<string|null>
+    limit: Ref<number|null>
+    projectsFilters: IProjectsFilters,
+    investorsFilters: IInvestorsFilters,
+    requestsFilters: IRequestsFilters,
+    refreshStore: () => void,
+}
 
 export const filterStoreSymbol = <InjectionKey<string>> Symbol('filterStore')
 
 export const createFilterStore = () => {
+    const searchQuery = ref(null)
+    const limit = ref(null)
 
-    // const investorFilter = reactive({
-    //     tags: null,
-    //     types: null,
-    //     nameSearchString: null,
-    //     ...toRefs(filter)
-    // })
-    //
-    // const getInvestorFilter = () => {
-    //     const newFilter = { ...investorFilter }
-    //     switch (newFilter.sortOption) {
-    //         case baseSortOption:
-    //             newFilter.sortOption = <String> null
-    //             break
-    //         case 'Сначала новые':
-    //             newFilter.sortOption = 'createdAt'
-    //             newFilter.sortOrder = 'DESC'
-    //             break
-    //         case 'Сначала старые':
-    //             newFilter.sortOption = 'createdAt'
-    //             newFilter.sortOrder = 'ASC'
-    //             break
-    //     }
-    //
-    //     return newFilter
-    // }
-    //
-    // const investorSortOptions = [ ...sortOptions ]
-    // const investorTypes = ['legal_entity', 'sole_trader', 'individual']
-    //
-    //
-    // const requestFilter = reactive({
-    //     statuses: null,
-    //     types: null,
-    //     ...toRefs(filter)
-    // })
-    //
-    // const getRequestFilter = () => {
-    //     const newFilter = { ...requestFilter }
-    //     switch (newFilter.sortOption) {
-    //         case baseSortOption:
-    //             newFilter.sortOption = <String> null
-    //             break
-    //         case 'Сначала новые':
-    //             newFilter.sortOption = 'createdAt'
-    //             newFilter.sortOrder = 'DESC'
-    //             break
-    //         case 'Сначала старые':
-    //             newFilter.sortOption = 'createdAt'
-    //             newFilter.sortOrder = 'ASC'
-    //             break
-    //     }
-    //     newFilter.types = requestFilter.types?.map( (type) => {
-    //         const el = Object.entries(requestTypes).find((elArr) => elArr[1] === type)
-    //         return el[0]
-    //     }) || null
-    //     newFilter.statuses = requestFilter.statuses?.map( (status) => {
-    //         const el = Object.entries(requestStatuses).find((elArr) => elArr[1] === status)
-    //         return el[0]
-    //     }) || null
-    //
-    //     console.log(requestFilter.types)
-    //     console.log(newFilter.types)
-    //
-    //     return newFilter
-    // }
-    //
-    // const requestSortOptions = [ ...sortOptions ]
-    // const requestTypes = {
-    //     ['register_project']: 'Заявка на создание проекта',
-    //     ['register_investor']: 'Заявка на создание инвестора',
-    //     ['change_project_business_data']: 'Заявка на изменение данных проекта',
-    //     ['change_investor_requisites']: 'Заявка на изменение данных инвестора',
-    // }
-    // const requestStatuses = {
-    //     ['rejected']: 'Отклонена',
-    //     ['on_moderation']: 'На модерации',
-    //     ['accepted']: 'Одобрена',
-    // }
+    const projectsFilters = reactive({
+        tags: null,
+        investmentMin: null,
+        investmentMax: null,
+    })
+
+    const investorsFilters = reactive({
+        interests: null,
+        types: null,
+    })
+
+    const requestsFilters = reactive({
+        statuses: null,
+        projectId: null,
+        investorId: null,
+    })
+
+    const refreshStore = () => {
+        searchQuery.value = null
+
+        limit.value = null
+
+        projectsFilters.tags = null
+        projectsFilters.investmentMin = null
+        projectsFilters.investmentMax = null
+
+        investorsFilters.interests = null
+        investorsFilters.types = null
+
+        requestsFilters.statuses = null
+        requestsFilters.projectId = null
+        requestsFilters.investorId = null
+    }
 
     return {
-        // projectFilter,
-        // getProjectFilter,
-        // projectSortOptions,
-        // investorFilter,
-        // getInvestorFilter,
-        // investorSortOptions,
-        // investorTypes,
-        // requestFilter,
-        // getRequestFilter,
-        // requestSortOptions,
-        // tags,
-        // investments,
-        // requestTypes,
-        // requestStatuses,
+        searchQuery,
+        limit,
+        projectsFilters,
+        investorsFilters,
+        requestsFilters,
+        refreshStore
     }
 }
 
-export const useFilterStore = () => inject(filterStoreSymbol)
+export const useFilterStore = () => <IFilterStore> inject(filterStoreSymbol)

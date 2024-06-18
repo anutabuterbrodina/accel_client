@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineEmits, defineProps, ref } from "vue";
-import { limitRule, notEmptyRule } from "@/components/forms/validators";
+import { limitRule, requiredRule } from "@/components/forms/validators";
 import { Constants } from "@/core/static/constants";
 import { useRequestStore } from "@/stores/request";
 import { useModalStore } from "@/stores/modal";
@@ -32,7 +32,7 @@ const submitForm = () => {
                 <v-select
                     v-model="request.rejectReason"
                     :items="Constants.getRequestRejectReasonsNames()"
-                    :rules="[notEmptyRule]"
+                    :rules="[requiredRule]"
                     label="Причина отказа"
                     chips
                     flat

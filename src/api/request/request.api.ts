@@ -7,24 +7,40 @@ import type { IChangeInvestorRequisitesRequest } from "@/api/request/change-inve
 import type { IRequest } from "@/api/request/request.interface";
 import type { IRequestListItem } from "@/api/request/request-list-item.interface";
 import type { IRejectRequest } from "@/api/request/reject-request.interface";
+import type { IRequestsListRequest } from "@/api/request/request-list-request.interface";
 
 export class RequestApi extends ApiManager {
 
-    public static async getSingle(requestId: string): Promise<IRequest> {
+    public static async getSingle(requestId: string): Promise<Request> {
         const url = this.formURL('', 'request')
         const params = { requestId }
+
         try {
             const result: IRequest = await this.get(url, params)
 
-            return result;
+            return new Request(
+                result.type,
+                result.creatorId,
+                result.contactEmail,
+                result.creatorComment,
+                result.requestContent,
+                result.rejectReason || null,
+                result.rejectMessage || null,
+                result.id,
+                result.status,
+                result.projectId || null,
+                result.investorId || null,
+                result.createdAt,
+            );
+
         } catch (e) {
             console.log('Не удалось загрузить заявку')
         }
     }
 
-    public static async getList(filters): Promise<Request[]> {
+    public static async getList(rawParams: IRequestsListRequest): Promise<Request[]> {
         const url = this.formURL('', 'requests')
-        const params = this.clearParams(filters)
+        const params = this.clearParams(rawParams)
 
         const result: IRequestListItem[] = await this.get(url, params)
 
@@ -53,6 +69,7 @@ export class RequestApi extends ApiManager {
 
         try {
             const result = await this.post(url, data)
+
         } catch (e) {
             alert('Не удалось сформировать создать заявку на регистрацию проекта')
         }
@@ -60,8 +77,10 @@ export class RequestApi extends ApiManager {
 
     public static async createRegisterInvestorRequest(data: IRegisterInvestorRequest) {
         const url = this.formURL('register-investor', 'requests')
+
         try {
             const result = await this.post(url, data)
+
         } catch (e) {
             alert('Не удалось сформировать создать заявку на регистрацию инвестора')
         }
@@ -72,6 +91,7 @@ export class RequestApi extends ApiManager {
 
         try {
             const result = await this.post(url, data)
+
         } catch (e) {
             alert('Не удалось сформировать создать заявку на изменение бизнес-данных проекта')
         }
@@ -82,6 +102,7 @@ export class RequestApi extends ApiManager {
 
         try {
             const result = await this.post(url, data)
+
         } catch (e) {
             alert('Не удалось сформировать создать заявку на изменение реквизитов инвестора')
         }

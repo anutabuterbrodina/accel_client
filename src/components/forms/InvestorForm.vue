@@ -1,48 +1,44 @@
 <script setup lang="ts">
-import { defineProps, reactive, ref } from "vue";
-import { Investor } from "@/core/entities/investor/investor";
+import { defineEmits, defineProps, ref } from "vue";
+import { useInvestorStore } from "@/stores/investor";
+import { limitRule, requiredRule, notEmptyRule } from "@/components/forms/validators";
+import { Constants } from "@/core/static/constants";
+
+const { investor } = useInvestorStore()
+const emit = defineEmits(['formAction'])
 
 defineProps({
     action: String
 })
 
-const valid = ref(false)
+const isValid = ref(false)
+const comment = ref('')
 
-const investor = reactive(new Investor(
-    '1',
-    'Investor 1',
-    'Investor 1 bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla ',
-    ['Тег 1', 'Тег 2', 'Тег 3'],
-    ['user1', 'user2', 'user3'],
-));
-
-const tags = ['Тег 1', 'Тег 2', 'Тег 3', 'Тег 4', 'Тег 5', 'Тег 6', 'Тег 7', 'Тег 8', 'Тег 9']
-
-const nameRules = [
-    v => !!v || 'Project name is required',
-    v => v.length <= 40 || 'Name must be less than 40 characters',
-]
-const descRules = [
-    v => v.length <= 400 || 'Project description must be less than 400 characters',
-]
+const submitForm = () => {
+    if (!isValid.value) {
+        alert('Введите корректные данные')
+        return
+    }
+    emit('formAction')
+}
 </script>
 
 <template>
-    <v-form v-model="valid" class="w-100">
+    <v-form v-model="isValid" class="w-100" @submit.prevent="submitForm" >
         <v-container>
             <div style="width: 700px;">
                 <div v-show="action === 'editCommonData' || action === 'create'">
                     <v-text-field
                         v-model="investor.name"
                         :counter="40"
-                        :rules="nameRules"
+                        :rules="action === 'editCommonData' || action === 'create' ? [requiredRule, (v) => limitRule(v, 40)] : []"
                         label="Название инвестора"
                         required
                     ></v-text-field>
                     <v-textarea
                         v-model="investor.description"
                         :counter="400"
-                        :rules="descRules"
+                        :rules="action === 'editCommonData' || action === 'create' ? [requiredRule, (v) => limitRule(v, 400)] : []"
                         label="Описание инвестора"
                         no-resize
                         rows="10"
@@ -53,32 +49,51 @@ const descRules = [
                     ></v-textarea>
                 </div>
 
-                <div v-show="action === 'editBusinessData' || action === 'create'">
+                <div v-show="action === 'editInterests' || action === 'create'">
                     <v-select
                         clearable
-                        v-model="investor.tags"
-                        :items="tags"
+                        v-model="investor.interests"
+                        :items="Constants.getTagsNames()"
+                        :rules="action === 'editInterests' || action === 'create' ? [notEmptyRule] : []"
                         chips
                         flat
                         multiple
                     ></v-select>
-
-                    Куча полей реквизитов
-<!--                    <div style="display: flex">-->
-<!--                        <v-select-->
-<!--                            v-model="project.investmentMin"-->
-<!--                            :items="investments"-->
-<!--                            :rules="rangeMinRules"-->
-<!--                            label="Мин. размер инвестиций"-->
-<!--                        ></v-select>-->
-<!--                        <v-select-->
-<!--                            v-model="project.investmentMax"-->
-<!--                            :items="investments"-->
-<!--                            :rules="rangeMaxRules"-->
-<!--                            label="Макс. размер инвестиций"-->
-<!--                        ></v-select>-->
-<!--                    </div>-->
                 </div>
+
+                <div>
+                    <v-text-field
+                        v-model="investor.ty"
+                        :counter="40"
+                        :rules="action === 'editBusinessData' ? [] : [requiredRule, (v) => limitRule(v, 40)]"
+                        label="Название проекта"
+                        required
+                    ></v-text-field>
+                    <v-text-field
+                        v-model="project.name"
+                        :counter="40"
+                        :rules="action === 'editBusinessData' ? [] : [requiredRule, (v) => limitRule(v, 40)]"
+                        label="Название проекта"
+                        required
+                    ></v-text-field>
+                    <v-text-field
+                        v-model="project.name"
+                        :counter="40"
+                        :rules="action === 'editBusinessData' ? [] : [requiredRule, (v) => limitRule(v, 40)]"
+                        label="Название проекта"
+                        required
+                    ></v-text-field>
+                    <v-text-field
+                        v-model="project.name"
+                        :counter="40"
+                        :rules="action === 'editBusinessData' ? [] : [requiredRule, (v) => limitRule(v, 40)]"
+                        label="Название проекта"
+                        required
+                    ></v-text-field>
+                </div>
+
+
+
             </div>
         </v-container>
 

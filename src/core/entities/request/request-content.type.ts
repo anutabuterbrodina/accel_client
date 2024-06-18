@@ -9,6 +9,6 @@ import {
 
 
 export type TRequestContent = IRegisterProjectRequestContext
-    | IRegisterInvestorRequestContext
-    | IChangeProjectBusinessDataRequestContext
-    | IChangeInvestorRequisitesRequestContext
+                            | IRegisterInvestorRequestContext
+                            | IChangeProjectBusinessDataRequestContext
+                            | IChangeInvestorRequisitesRequestContext

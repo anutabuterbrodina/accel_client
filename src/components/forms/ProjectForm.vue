@@ -33,7 +33,7 @@ const submitForm = () => {
                     <v-text-field
                         v-model="project.name"
                         :counter="40"
-                        :rules="[requiredRule, (v) => limitRule(v, 40)]"
+                        :rules="action === 'editBusinessData' ? [] : [requiredRule, (v) => limitRule(v, 40)]"
                         label="Название проекта"
                         required
                     ></v-text-field>
@@ -41,7 +41,7 @@ const submitForm = () => {
                     <v-textarea
                         v-model="project.description"
                         :counter="400"
-                        :rules="[requiredRule, (v) => limitRule(v, 400)]"
+                        :rules="action === 'editBusinessData' ? [] : [requiredRule, (v) => limitRule(v, 400)]"
                         label="Описание проекта"
                         no-resize
                         rows="10"
@@ -57,7 +57,7 @@ const submitForm = () => {
                         clearable
                         v-model="project.tags"
                         :items="Constants.getTagsNames()"
-                        :rules="[notEmptyRule]"
+                        :rules="action === 'editCommonData' ? [] : [notEmptyRule]"
                         label="Категории"
                         chips
                         flat
@@ -68,13 +68,13 @@ const submitForm = () => {
                         <v-select
                             v-model="project.investmentMin"
                             :items="Constants.getInvestmentsValues()"
-                            :rules="[notEmptyRule]"
+                            :rules="action === 'editCommonData' ? [] : [notEmptyRule]"
                             label="Мин. размер инвестиций"
                         ></v-select>
                         <v-select
                             v-model="project.investmentMax"
                             :items="Constants.getInvestmentsValues()"
-                            :rules="[ rangeMaxRule, notEmptyRule]"
+                            :rules="action === 'editCommonData' ? [] : [rangeMaxRule, notEmptyRule]"
                             label="Макс. размер инвестиций"
                         ></v-select>
                     </div>

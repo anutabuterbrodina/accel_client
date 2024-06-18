@@ -1,8 +1,10 @@
 import { EProjectStatuses } from "@/core/entities/project/project-statuses.enum";
 import { ERequestStatuses } from "@/core/entities/request/request-statuses.enum";
 import { ERequestTypes } from "@/core/entities/request/request-types.enum";
-import { Project } from "@/core/entities/project";
+import { Project } from "@/core/entities/project/project";
 import { ERequestRejectReasons } from "@/core/entities/request/request-reject-reasons.enum";
+import { EUserAccountTypes } from "@/core/entities/user/user-account-types.enum";
+import { EInvestorTypes } from "@/core/entities/investor/investor-types.interface";
 
 export class Constants {
 
@@ -42,7 +44,7 @@ export class Constants {
 
     /** PROJECT_STATUSES */
 
-    private static readonly PROJECT_STATUSES = [
+    public static readonly PROJECT_STATUSES = [
         {
             name: 'Активен',
             value: EProjectStatuses.ON_BOARD,
@@ -79,12 +81,43 @@ export class Constants {
         },
     ]
 
+    public static getRequestStatusesValuesByNames(names: string[]): ERequestStatuses[] {
+        return this.REQUEST_STATUSES
+            .filter( status => names.includes(status.name) )
+            ?.map( status => status.value )
+    }
+
     public static getRequestStatusesNames(): string[] {
         return this.REQUEST_STATUSES.map(status => status.name)
     }
 
     public static getRequestStatusNameByValue(value: ERequestStatuses): string {
         return this.REQUEST_STATUSES.find(status => status.value === value).name
+    }
+
+    /** USER_ACCOUNT_TYPES */
+
+    public static readonly USER_ACCOUNT_TYPES = [
+        {
+            name: 'Хочу создать свой проект',
+            value: EUserAccountTypes.PROJECT,
+        },
+        {
+            name: 'Хочу зарегистрироваться как инвестор',
+            value: EUserAccountTypes.INVESTOR,
+        },
+    ]
+
+    public static getUserAccountTypeNames(): string[] {
+        return this.USER_ACCOUNT_TYPES.map(type => type.name)
+    }
+
+    public static getUserAccountTypeValueByName(value: string): EUserAccountTypes {
+        return this.USER_ACCOUNT_TYPES.find(type => type.name === value).value
+    }
+
+    public static getUserAccountTypeNameByValue(value: EUserAccountTypes): string {
+        return this.USER_ACCOUNT_TYPES.find(type => type.value === value).name
     }
 
 
@@ -114,7 +147,38 @@ export class Constants {
     }
 
     public static getRequestTypeNameByValue(value: ERequestTypes): string {
-        return this.REQUEST_TYPES.find(type => type.value === value).name
+        return this.REQUEST_TYPES.find(type => type.value === value)?.name || ''
+    }
+
+
+    /** INVESTOR_TYPES */
+
+    private static readonly INVESTOR_TYPES = [
+        {
+            name: 'Юридическое лицо',
+            value: EInvestorTypes.LEGAL_ENTITY,
+        },
+        {
+            name: 'Физическое лицо',
+            value: EInvestorTypes.INDIVIDUAL,
+        },
+        {
+            name: 'Индивид. предприниматель',
+            value: EInvestorTypes.SOLE_TRADER,
+        },
+    ]
+
+    public static getInvestorTypesNames(): string[] {
+        return this.INVESTOR_TYPES.map(type => type.name)
+    }
+
+    public static getInvestorTypeNameByValue(value: EInvestorTypes): string {
+        return this.INVESTOR_TYPES.find(type => type.value === value)?.name || ''
+    }
+    public static getInvestorTypesValuesByNames(names: string[]): EInvestorTypes[] {
+        return this.INVESTOR_TYPES
+            .filter( type => names.includes(type.name) )
+            ?.map( type => type.value )
     }
 
 
@@ -177,13 +241,13 @@ export class Constants {
             entities: ['*'],
         },
         {
-            name: 'Размер инвестиций возр.',
+            name: 'Инвестиции возр.',
             value: 'investmentMin',
             order: 'ASC',
             entities: [Project.name],
         },
         {
-            name: 'Размер инвестиций уб.',
+            name: 'Инвестиции уб.',
             value: 'investmentMax',
             order: 'DESC',
             entities: [Project.name],

@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import { defineProps, PropType } from "vue";
-import { Project } from "@/core/entities/project";
-import { Investor } from "@/core/entities/investor/investor";
+import { defineProps } from "vue";
 
 defineProps({
-    item: Object as PropType<Project | Investor>,
+    item: Object,
 })
 
 </script>

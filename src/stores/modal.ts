@@ -1,6 +1,12 @@
 import { inject } from "@vue/runtime-core";
 import { computed, ref } from "vue";
-import type { InjectionKey } from "vue";
+import type { ComputedRef, InjectionKey } from "vue";
+
+interface IModalStore {
+    isShown: ComputedRef<boolean>,
+    setVisibility: (value: boolean) => void,
+    refreshStore: () => void,
+}
 
 export const modalStoreSymbol = <InjectionKey<string>> Symbol('modalStore')
 
@@ -12,7 +18,11 @@ export const createModalStore = () => {
         isVisible.value = value
     }
 
-    return { isShown, setVisibility }
+    const refreshStore = () => {
+        isVisible.value = false
+    }
+
+    return { isShown, setVisibility, refreshStore }
 }
 
-export const useModalStore = () => inject(modalStoreSymbol)
+export const useModalStore = () => <IModalStore> inject(modalStoreSymbol)

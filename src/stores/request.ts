@@ -7,35 +7,62 @@ import { RequestApi } from "@/api/request/request.api";
 
 interface IRequestStore {
     request: UnwrapNestedRefs<Request>,
-    refreshStore: (requestId: string) => Promise<void>
+    loadRequest: (requestId: string) => Promise<void>
+    refreshStore: () => Promise<void>
 }
 
 export const requestStoreSymbol = <InjectionKey<string>> Symbol('requestStore')
 
 export const createRequestStore = () => {
-    const request = reactive<Request>({})
+    const request = reactive<Request>(new Request(
+        ERequestTypes.UNKNOWN,
+        '',
+        '',
+        '',
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+    ))
 
-    const refreshStore = async (requestId: string) => {
-        RequestApi.getSingle(requestId).then(
-            (result) => {
-                request.type = result.type
-                request.creatorId = result.creatorId
-                request.contactEmail = result.contactEmail
-                request.comment = result.creatorComment
-                request.content = result.requestContent
-                request.rejectReason = result.rejectReason || null
-                request.rejectMessage = result.rejectMessage || null
-                request.id = result.id
-                request.status = result.status
-                request.projectId = result.projectId || null
-                request.investorId = result.investorId || null
-                request.createdAt = result.createdAt
-            }
-        )
+    const loadRequest = async (requestId: string) => {
+        const result = await RequestApi.getSingle(requestId)
+        request.type = result.type
+        request.creatorId = result.creatorId
+        request.contactEmail = result.contactEmail
+        request.comment = result.comment
+        request.content = result.content
+        request.rejectReason = result.rejectReason
+        request.rejectMessage = result.rejectMessage
+        request.id = result.id
+        request.status = result.status
+        request.projectId = result.projectId
+        request.investorId = result.investorId
+        request.createdAt = result.createdAt
+    }
+
+    const refreshStore = async () => {
+        request.type = ERequestTypes.UNKNOWN
+        request.creatorId = ''
+        request.contactEmail = ''
+        request.comment = ''
+        request.content = null
+        request.rejectReason = null
+        request.rejectMessage = null
+        request.id = null
+        request.status = null
+        request.projectId = null
+        request.investorId = null
+        request.createdAt = null
     }
 
     return {
         request,
+        loadRequest,
         refreshStore,
     }
 }
