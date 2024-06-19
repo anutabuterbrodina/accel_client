@@ -9,7 +9,7 @@ import { EInvestorTypes } from "@/core/entities/investor/investor-types.interfac
 interface IInvestorStore {
     investor: UnwrapNestedRefs<Investor>,
     loadInvestor: (investorId: string) => Promise<void>,
-    refreshStore: () => Promise<void>,
+    refreshStore: () => void,
 }
 
 export const investorStoreSymbol = <InjectionKey<string>> Symbol('investorStore')
@@ -42,7 +42,7 @@ export const createInvestorStore = () => {
         investor.ownerId = result.ownerId
     }
 
-    const refreshStore = async () => {
+    const refreshStore = () => {
         investor.requisites = new Requisites()
         investor.name = ''
         investor.description = ''
@@ -50,8 +50,9 @@ export const createInvestorStore = () => {
         investor.id = null
         investor.members = null
         investor.isActive = null
-        investor.type = null
+        investor.type = EInvestorTypes.UNKNOWN
         investor.createdAt = null
+        console.log('Investor store has been refreshed')
     }
 
     return {

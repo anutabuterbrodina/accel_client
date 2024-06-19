@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import { defineEmits, defineProps, onMounted, ref, watch } from "vue";
+import { defineEmits, defineProps, ref, watch } from "vue";
 import { useInvestorStore } from "@/stores/investor";
 import { limitRule, requiredRule, notEmptyRule } from "@/components/forms/validators";
 import { Constants } from "@/core/static/constants";
-import { useRoute } from "vue-router";
 
-const { investor, loadInvestor } = useInvestorStore()
+const { investor } = useInvestorStore()
 const emit = defineEmits(['formAction'])
-const route = useRoute()
 
-defineProps({
+const props = defineProps({
     action: String
 })
 
@@ -24,7 +22,7 @@ const submitForm = () => {
     emit('formAction')
 }
 
-const type = ref(Constants.getInvestorTypeNameByValue(investor.type))
+const type = ref(null)
 
 watch(type, () => {
     investor.type = Constants.getInvestorTypeValueByName(type.value)
@@ -49,8 +47,6 @@ watch(type, () => {
 
                     <v-textarea
                         v-model="investor.description"
-                        :counter="400"
-                        :rules="action === 'editCommonData' || action === 'create' ? [(v) => limitRule(v, 400)] : []"
                         label="Описание инвестора"
                         no-resize
                         rows="10"
@@ -86,45 +82,31 @@ watch(type, () => {
 
                     <v-text-field
                         v-model="investor.requisites.legalName"
-                        :counter="20"
-                        :rules="action === 'editBusinessData' || action === 'create' ? [(v) => limitRule(v, 20)] : []"
                         label="Юридическое имя"
                     ></v-text-field>
 
                     <v-text-field
                         v-model="investor.requisites.address"
-                        :counter="100"
-                        :rules="action === 'editBusinessData' || action === 'create' ? [(v) => limitRule(v, 100)] : []"
                         label="Юридический адресс"
                     ></v-text-field>
                     <v-text-field
                         v-model="investor.requisites.INN"
-                        :counter="12"
-                        :rules="action === 'editBusinessData' || action === 'create' ? [(v) => limitRule(v, 12)] : []"
                         label="ИНН"
                     ></v-text-field>
                     <v-text-field
                         v-model="investor.requisites.OGRN"
-                        :counter="12"
-                        :rules="action === 'editBusinessData' || action === 'create' ? [(v) => limitRule(v, 12)] : []"
                         label="ОГРН"
                     ></v-text-field>
                     <v-text-field
                         v-model="investor.requisites.KPP"
-                        :counter="12"
-                        :rules="action === 'editBusinessData' || action === 'create' ? [(v) => limitRule(v, 12)] : []"
                         label="КПП"
                     ></v-text-field>
                     <v-text-field
                         v-model="investor.requisites.OKPO"
-                        :counter="12"
-                        :rules="action === 'editBusinessData' || action === 'create' ? [(v) => limitRule(v, 12)] : []"
                         label="ОКПО"
                     ></v-text-field>
                     <v-text-field
                         v-model="investor.requisites.BIK"
-                        :counter="12"
-                        :rules="action === 'editBusinessData' || action === 'create' ? [(v) => limitRule(v, 12)] : []"
                         label="БИК"
                     ></v-text-field>
                 </div>

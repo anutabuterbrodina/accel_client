@@ -19,10 +19,10 @@ import type { IRegisterInvestorRequestContext } from "@/core/entities/request/re
 
 const { currentUser } = useAuthStore()
 const { loadInvestorsList } = useInvestorsListStore()
+const { investor, refreshStore: refreshInvestorStore } = useInvestorStore()
 const { sort, refreshStore: refreshSortStore } = useSortStore()
 const { searchQuery, investorsFilters, refreshStore: refreshFilterStore } = useFilterStore()
 const { setVisibility, refreshStore: refreshModalStore } = useModalStore()
-const { investor, refreshStore: refreshInvestorStore } = useInvestorStore()
 const router = useRouter()
 
 if (currentUser.role !== EUserRoles.COMMON_USER) {
@@ -62,9 +62,10 @@ const handleSubmitForm = async () => {
 
 onMounted(async () => {
     await loadInvestorsList(investorsFilters, currentUser.id, searchQuery.value, sort)
+    refreshInvestorStore()
 })
 
-watch([investorsFilters, sort], async () => {
+watch([investorsFilters, searchQuery, sort], async () => {
     await loadInvestorsList(investorsFilters, currentUser.id, searchQuery.value, sort)
 })
 </script>

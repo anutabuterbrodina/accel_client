@@ -173,7 +173,7 @@ export class Constants {
     }
 
     public static getInvestorTypeNameByValue(value: EInvestorTypes): string {
-        return this.INVESTOR_TYPES.find(type => type.value === value)?.name || ''
+        return this.INVESTOR_TYPES.find(type => type.value === value).name
     }
 
     public static getInvestorTypeValueByName(value: string): EInvestorTypes {

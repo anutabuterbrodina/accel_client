@@ -41,7 +41,7 @@ const submitForm = () => {
                 <v-textarea
                     v-model="request.rejectMessage"
                     :counter="150"
-                    :rules="[(v) => limitRule(v, 150)]"
+                    :rules="[requiredRule, (v) => limitRule(v, 150)]"
                     label="Объяснение отказа"
                     no-resize
                     rows="10"

@@ -38,17 +38,19 @@ export class InvestorApi extends ApiManager {
         try {
             const result: IInvestorListItem[] = await this.get(url, params)
 
-            return result.map(item => new Investor(
+            const a = result.map(item => new Investor(
                 new Requisites(),
                 item.name,
                 item?.description || '',
-                item.interestList,
+                item.interestList?.filter((el, ind) => ind === item.interestList.indexOf(el)),
                 item.id,
-                item.memberList,
+                item.memberList?.filter((el, ind) => ind === item.memberList.indexOf(el)),
                 true,
                 item.type,
                 item.createdAt,
             ))
+            console.log(a)
+            return a
 
         } catch (e) {
             return []

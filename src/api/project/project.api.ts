@@ -27,15 +27,16 @@ export class ProjectApi extends ApiManager {
         try {
             const result: IProjectListItem[] = await this.get(url, params)
 
+            console.log(result)
             return result.map(item => new Project(
                 item.name,
                 item?.description || '',
                 item.investmentMin,
                 item.investmentMax,
-                item.tagsList,
+                item.tagsList?.filter((el, ind) => ind === item.tagsList.indexOf(el)),
                 item.id,
                 item.createdAt,
-                item.membersList,
+                item.membersList?.filter((el, ind) => ind === item.membersList.indexOf(el)),
             ))
 
         } catch (e) {

@@ -14,7 +14,7 @@ onMounted(async () => {
     await loadInvestorsList(investorsFilters, null, searchQuery.value, sort)
 })
 
-watch([investorsFilters, sort], async () => {
+watch([investorsFilters, searchQuery, sort], async () => {
     await loadInvestorsList(investorsFilters, null, searchQuery.value, sort)
 })
 </script>

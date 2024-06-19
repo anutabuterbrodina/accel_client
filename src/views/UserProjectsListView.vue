@@ -64,7 +64,7 @@ onMounted(async () => {
     await loadProjectsList(projectsFilters, currentUser.id, null, searchQuery.value, sort)
 })
 
-watch([projectsFilters, sort], async () => {
+watch([projectsFilters, searchQuery, sort], async () => {
     await loadProjectsList(projectsFilters, currentUser.id, null, searchQuery.value, sort)
 })
 </script>
